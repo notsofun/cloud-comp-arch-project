@@ -6,11 +6,11 @@ checkpoint_interval: 1 # Do not change this
 llm:
   api_base: "https://api.swissai.cscs.ch/v1"
   primary_model: "<your model>"
+  top_p: 0.7 # Feel free to experiment with this value
   # Possible additional parameters to configure the LLM:
   # temperature: 
   # max_tokens: 
   # timeout: 
-  # top_p: 
 
 prompt:
   # Prompts to provide the LLM with. You can directly write the prompt in the config, e.g.
