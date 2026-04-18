@@ -4,7 +4,7 @@ set -e  # 出错直接停止（避免污染实验）
 
 BASE_DIR=$(pwd)
 
-LOG_DIR="$BASE_DIR/logs"
+LOG_DIR="$BASE_DIR/logs_part2a"
 mkdir -p "$LOG_DIR"
 
 benchmarks=(
