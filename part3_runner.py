@@ -24,7 +24,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 ZONE = os.environ.get("GCP_ZONE", "europe-west1-b")
-SSH_KEY = os.environ.get("CCA_SSH_KEY", "~/.ssh/cloud-computing")
+SSH_KEY = os.path.expanduser(os.environ.get("CCA_SSH_KEY", "~/.ssh/cloud-computing"))
 MCPERF_BIN = os.environ.get("MCPERF_BIN", "~/memcache-perf-dynamic/mcperf")
 MCPERF_SECONDS = int(os.environ.get("MCPERF_SECONDS", "1200"))
 
@@ -54,40 +54,66 @@ def kubectl(*args: str, capture: bool = False, check: bool = True) -> subprocess
     return run(["kubectl", *args], check=check, capture=capture)
 
 
-def gcloud_ssh(node: str, command: str, *, capture: bool = False) -> subprocess.CompletedProcess:
-    return run(
-        [
-            "gcloud",
-            "compute",
-            "ssh",
-            "--ssh-key-file",
-            SSH_KEY,
-            f"ubuntu@{node}",
-            "--zone",
-            ZONE,
-            "--command",
-            command,
-        ],
-        capture=capture,
-    )
+def node_external_ip_by_name(node_name: str) -> str:
+    """Return the public external IP of a k8s node given its node name."""
+    out = kubectl(
+        "get",
+        "node",
+        node_name,
+        "-o",
+        "jsonpath={.status.addresses[?(@.type=='ExternalIP')].address}",
+        capture=True,
+    ).stdout.strip()
+    if not out:
+        raise RuntimeError(f"no external IP found for node {node_name}")
+    return out
+
+
+def _ssh_cmd(ext_ip: str, command: str) -> list[str]:
+    """Build a direct SSH command list to avoid gcloud compute ssh's
+    metadata-based key injection, which does not work reliably on kops-managed
+    nodes whose authorized_keys is written at cloud-init time from the kops
+    SSH secret (not GCP project metadata)."""
+    return [
+        "ssh",
+        "-i", SSH_KEY,
+        "-o", "StrictHostKeyChecking=no",
+        "-o", "UserKnownHostsFile=/dev/null",
+        "-o", "ConnectTimeout=30",
+        "-o", "BatchMode=yes",
+        "-o", "LogLevel=ERROR",
+        f"ubuntu@{ext_ip}",
+        command,
+    ]
+
+
+def gcloud_ssh(node: str, command: str, *, capture: bool = False, retries: int = 4) -> subprocess.CompletedProcess:
+    """Run a command on a cluster node via direct SSH using its external IP."""
+    ext_ip = node_external_ip_by_name(node)
+    last_exc: Exception | None = None
+    for attempt in range(1, retries + 1):
+        try:
+            return run(_ssh_cmd(ext_ip, command), capture=capture)
+        except subprocess.CalledProcessError as exc:
+            last_exc = exc
+            if attempt < retries:
+                wait = 10 * attempt
+                print(
+                    f"[ssh] attempt {attempt}/{retries} to {node} ({ext_ip}) failed "
+                    f"(exit {exc.returncode}) — retrying in {wait}s …",
+                    flush=True,
+                )
+                time.sleep(wait)
+    assert last_exc is not None
+    raise last_exc
 
 
 def gcloud_ssh_popen(node: str, command: str, out_file: Path) -> subprocess.Popen:
-    print(f"+ gcloud compute ssh ubuntu@{node} --zone {ZONE} --command {command!r}", flush=True)
+    ext_ip = node_external_ip_by_name(node)
+    print(f"+ ssh ubuntu@{ext_ip} -- {command!r}", flush=True)
     out = out_file.open("w", encoding="utf-8")
     return subprocess.Popen(
-        [
-            "gcloud",
-            "compute",
-            "ssh",
-            "--ssh-key-file",
-            SSH_KEY,
-            f"ubuntu@{node}",
-            "--zone",
-            ZONE,
-            "--command",
-            command,
-        ],
+        _ssh_cmd(ext_ip, command),
         cwd=ROOT,
         stdout=out,
         stderr=subprocess.STDOUT,
@@ -231,10 +257,12 @@ def start_mcperf(result_file: Path, memcached_ip: str) -> subprocess.Popen:
     agent_a_ip = node_internal_ip("client-agent-a")
     agent_b_ip = node_internal_ip("client-agent-b")
 
-    gcloud_ssh(agent_a, f"pkill -f mcperf || true; nohup {MCPERF_BIN} -T 2 -A >/tmp/mcperf-agent.log 2>&1 &")
-    gcloud_ssh(agent_b, f"pkill -f mcperf || true; nohup {MCPERF_BIN} -T 4 -A >/tmp/mcperf-agent.log 2>&1 &")
+    # Use 'disown' so the SSH session can close cleanly after forking the
+    # background mcperf process; without it some gcloud/SSH versions return 255.
+    gcloud_ssh(agent_a, f"pkill -x mcperf 2>/dev/null || true; nohup {MCPERF_BIN} -T 2 -A >/tmp/mcperf-agent.log 2>&1 & disown; true")
+    gcloud_ssh(agent_b, f"pkill -x mcperf 2>/dev/null || true; nohup {MCPERF_BIN} -T 4 -A >/tmp/mcperf-agent.log 2>&1 & disown; true")
     time.sleep(5)
-    gcloud_ssh(measure, f"pkill -f mcperf || true; nohup {MCPERF_BIN} -s {memcached_ip} --loadonly >/tmp/mcperf-loadonly.log 2>&1 &")
+    gcloud_ssh(measure, f"pkill -x mcperf 2>/dev/null || true; nohup {MCPERF_BIN} -s {memcached_ip} --loadonly >/tmp/mcperf-loadonly.log 2>&1 & disown; true")
     time.sleep(5)
 
     command = (
@@ -248,7 +276,7 @@ def start_mcperf(result_file: Path, memcached_ip: str) -> subprocess.Popen:
 def stop_mcperf() -> None:
     for label in ("client-agent-a", "client-agent-b", "client-measure"):
         try:
-            gcloud_ssh(node_name(label), "pkill -f mcperf || true")
+            gcloud_ssh(node_name(label), "pkill -x mcperf || true")
         except Exception as exc:
             print(f"warning: failed to stop mcperf on {label}: {exc}", file=sys.stderr)
 
@@ -362,6 +390,36 @@ def main() -> int:
 
     if not re.fullmatch(r"\d{3}", args.group):
         raise SystemExit("--group must be a three-digit value such as 001")
+
+    # Pre-flight: verify mcperf is installed on every client node.
+    print("Checking mcperf installation on client nodes …", flush=True)
+    missing: list[str] = []
+    for label in ("client-agent-a", "client-agent-b", "client-measure"):
+        n = node_name(label)
+        try:
+            result = gcloud_ssh(n, f"test -x {MCPERF_BIN} && echo ok", capture=True, retries=2)
+            if result.stdout.strip() != "ok":
+                missing.append(label)
+        except Exception:
+            missing.append(label)
+    if missing:
+        nodes_str = ", ".join(missing)
+        raise SystemExit(
+            f"\n[ERROR] mcperf binary not found on: {nodes_str}\n"
+            f"  Expected path: {MCPERF_BIN}\n\n"
+            "  Please SSH into each missing node and install it:\n"
+            "    sudo sed -i 's/^Types: deb$/Types: deb deb-src/' "
+            "/etc/apt/sources.list.d/ubuntu.sources\n"
+            "    sudo apt-get update\n"
+            "    sudo apt-get install libevent-dev libzmq3-dev git make g++ --yes\n"
+            "    sudo apt-get build-dep memcached --yes\n"
+            "    git clone https://github.com/eth-easl/memcache-perf-dynamic.git\n"
+            "    cd memcache-perf-dynamic && make\n\n"
+            "  To SSH into a node (example):\n"
+            f"    ssh -i {SSH_KEY} ubuntu@<EXTERNAL_IP>\n"
+            "  Get external IPs with: kubectl get nodes -o wide\n"
+        )
+    print("mcperf OK on all client nodes.", flush=True)
 
     raw_schedule = load_schedule(args.policy_file)
     jobs = normalize_schedule(raw_schedule)
