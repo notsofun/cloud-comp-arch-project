@@ -1,11 +1,11 @@
 # By default, your evolution will run for 50 iterations; feel free to change this value as needed.
 # At any time, you can resume evolution from a specific checkpoint by providing the --checkpoint flag to openevolve-run.
-max_iterations: 50
+max_iterations: 10
 checkpoint_interval: 1 # Do not change this
 
 llm:
   api_base: "https://api.swissai.cscs.ch/v1"
-  primary_model: "<your model>"
+  primary_model: "swiss-ai/Apertus-70B-Instruct-2509"
   top_p: 0.7 # Feel free to experiment with this value
   # Possible additional parameters to configure the LLM:
   # temperature: 
@@ -49,8 +49,7 @@ database:
 evaluator:
   cascade_evaluation: false
   parallel_evaluations: 1
-  # Relevant parameters:
-  # timeout: 
+  timeout: 2400
 
 diff_based_evolution: true
 max_code_length: 50000

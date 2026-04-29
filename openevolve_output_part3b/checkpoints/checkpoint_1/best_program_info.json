@@ -1,0 +1,17 @@
+{
+  "id": "31faaa9f-727c-441c-81c6-78a729747350",
+  "generation": 1,
+  "iteration": 1,
+  "current_iteration": 1,
+  "metrics": {
+    "combined_score": 0.62375,
+    "correctness": 1.0,
+    "slo_ok": 1.0,
+    "makespan_seconds": 301.0,
+    "max_p95_us": 385.6,
+    "slo_violations": 0.0
+  },
+  "language": "python",
+  "timestamp": 1777495336.740246,
+  "saved_at": 1777495336.759181
+}
