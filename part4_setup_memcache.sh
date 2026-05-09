@@ -4,8 +4,9 @@ set -euo pipefail
 MEMCACHED_IP="${1:?usage: part4_setup_memcache.sh INTERNAL_MEMCACHED_IP}"
 
 sudo apt-get update
-sudo apt-get install -y memcached libmemcached-tools docker.io
+sudo apt-get install -y memcached libmemcached-tools docker.io python3-docker
 sudo systemctl enable --now docker
+sudo usermod -aG docker ubuntu || true
 
 sudo python3 - "$MEMCACHED_IP" <<'PY'
 import sys

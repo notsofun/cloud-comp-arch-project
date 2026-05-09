@@ -12,11 +12,18 @@ memcached extra cores before the machine is saturated.
 from __future__ import annotations
 
 import argparse
-import os
 import subprocess
 import time
 from collections import deque
 from dataclasses import dataclass
+from typing import Any
+
+try:
+    import docker
+    from docker.errors import APIError, DockerException, NotFound
+except ModuleNotFoundError:
+    docker = None  # type: ignore[assignment]
+    APIError = DockerException = NotFound = Exception  # type: ignore[misc,assignment]
 
 from scheduler_logger import Job as LogJob
 from scheduler_logger import SchedulerLogger
@@ -83,9 +90,80 @@ def run(cmd: list[str], *, capture: bool = False, check: bool = True) -> subproc
     )
 
 
-def docker(*args: str, capture: bool = False, check: bool = True) -> subprocess.CompletedProcess:
-    base = ["docker"] if os.geteuid() == 0 else ["sudo", "docker"]
-    return run([*base, *args], capture=capture, check=check)
+class DockerRuntime:
+    def __init__(self) -> None:
+        if docker is None:
+            raise RuntimeError("Docker Python SDK is not installed; run part4_setup_memcache.sh first")
+        try:
+            self.client = docker.from_env()
+            self.client.ping()
+        except DockerException as exc:
+            raise RuntimeError(
+                "failed to connect to Docker through the Python SDK; "
+                "make sure docker is running and the ubuntu user is in the docker group"
+            ) from exc
+
+    def remove_matching(self, name_prefix: str) -> None:
+        containers = self.client.containers.list(all=True, filters={"name": name_prefix})
+        for container in containers:
+            if container.name.startswith(name_prefix):
+                try:
+                    container.remove(force=True)
+                except APIError:
+                    pass
+
+    def remove(self, name: str) -> None:
+        try:
+            self.client.containers.get(name).remove(force=True)
+        except NotFound:
+            pass
+
+    def run_job(self, spec: BatchJob, cores: tuple[int, ...], name: str) -> None:
+        self.remove(name)
+        self.client.containers.run(
+            spec.image,
+            command=[
+                "./run",
+                "-a",
+                "run",
+                "-S",
+                spec.suite,
+                "-p",
+                spec.name,
+                "-i",
+                "native",
+                "-n",
+                str(spec.threads),
+            ],
+            cpuset_cpus=cpuset(cores),
+            detach=True,
+            name=name,
+        )
+
+    def state(self, name: str) -> tuple[str, int | None]:
+        try:
+            container = self.client.containers.get(name)
+        except NotFound:
+            return "missing", None
+        container.reload()
+        state: dict[str, Any] = container.attrs.get("State", {})
+        return str(state.get("Status", "unknown")), state.get("ExitCode")
+
+    def logs_tail(self, name: str, tail: int = 100) -> str:
+        try:
+            logs = self.client.containers.get(name).logs(tail=tail)
+        except (APIError, NotFound):
+            return ""
+        return logs.decode("utf-8", errors="replace")[-2000:]
+
+    def pause(self, name: str) -> None:
+        self.client.containers.get(name).pause()
+
+    def unpause(self, name: str) -> None:
+        self.client.containers.get(name).unpause()
+
+    def update_cpuset(self, name: str, cores: tuple[int, ...]) -> None:
+        self.client.containers.get(name).update(cpuset_cpus=cpuset(cores))
 
 
 def core_list(cores: tuple[int, ...] | list[int]) -> list[str]:
@@ -332,83 +410,62 @@ class HeadroomPolicy:
         return desired, reason, score
 
 
-def cleanup_containers() -> None:
-    out = docker("ps", "-a", "--filter", "name=cca-part4-", "--format", "{{.Names}}", capture=True, check=False).stdout
-    names = [line.strip() for line in out.splitlines() if line.strip()]
-    if names:
-        docker("rm", "-f", *names, check=False)
+def cleanup_containers(runtime: DockerRuntime) -> None:
+    runtime.remove_matching("cca-part4-")
 
 
-def start_container(spec: BatchJob, cores: tuple[int, ...], logger: SchedulerLogger) -> RunningJob:
+def start_container(
+    runtime: DockerRuntime,
+    spec: BatchJob,
+    cores: tuple[int, ...],
+    logger: SchedulerLogger,
+) -> RunningJob:
     name = f"cca-part4-{spec.name}"
-    docker("rm", "-f", name, check=False)
-    docker(
-        "run",
-        "--cpuset-cpus",
-        cpuset(cores),
-        "-d",
-        "--name",
-        name,
-        spec.image,
-        "./run",
-        "-a",
-        "run",
-        "-S",
-        spec.suite,
-        "-p",
-        spec.name,
-        "-i",
-        "native",
-        "-n",
-        str(spec.threads),
-    )
+    runtime.run_job(spec, cores, name)
     logger.job_start(log_job(spec.name), core_list(cores), spec.threads)
     return RunningJob(spec=spec, container=name, cores=cores)
 
 
-def container_done(job: RunningJob) -> bool:
-    out = docker(
-        "inspect",
-        "-f",
-        "{{.State.Status}} {{.State.ExitCode}}",
-        job.container,
-        capture=True,
-        check=False,
-    )
-    if out.returncode != 0:
+def container_done(runtime: DockerRuntime, job: RunningJob) -> bool:
+    status, exit_code = runtime.state(job.container)
+    if status == "missing":
         return False
-    status, exit_code = out.stdout.strip().split()
     if status == "exited":
-        if exit_code != "0":
-            logs = docker("logs", job.container, capture=True, check=False).stdout[-2000:]
+        if exit_code != 0:
+            logs = runtime.logs_tail(job.container)
             raise RuntimeError(f"{job.container} exited with {exit_code}\n{logs}")
         return True
     return False
 
 
-def update_container_cores(job: RunningJob, cores: tuple[int, ...], logger: SchedulerLogger) -> RunningJob:
+def update_container_cores(
+    runtime: DockerRuntime,
+    job: RunningJob,
+    cores: tuple[int, ...],
+    logger: SchedulerLogger,
+) -> RunningJob:
     if not cores:
         if not job.paused:
-            docker("pause", job.container)
+            runtime.pause(job.container)
             logger.job_pause(log_job(job.spec.name))
             job.paused = True
         return job
 
     if job.cores != cores:
-        docker("container", "update", "--cpuset-cpus", cpuset(cores), job.container, capture=True)
+        runtime.update_cpuset(job.container, cores)
         logger.update_cores(log_job(job.spec.name), core_list(cores))
         job.cores = cores
 
     if job.paused:
-        docker("unpause", job.container)
+        runtime.unpause(job.container)
         logger.job_unpause(log_job(job.spec.name))
         job.paused = False
     return job
 
 
-def finish_container(job: RunningJob, logger: SchedulerLogger) -> None:
+def finish_container(runtime: DockerRuntime, job: RunningJob, logger: SchedulerLogger) -> None:
     logger.job_end(log_job(job.spec.name))
-    docker("rm", job.container, check=False)
+    runtime.remove(job.container)
 
 
 def static_memcached_count() -> int:
@@ -466,6 +523,7 @@ def select_next_job(
 
 def run_scheduler(args: argparse.Namespace) -> None:
     logger = SchedulerLogger(args.log_file)
+    runtime = DockerRuntime()
     pending = list(JOB_QUEUE)
     running: RunningJob | None = None
     memcached_count = static_memcached_count() if args.policy == "static" else 3
@@ -478,15 +536,19 @@ def run_scheduler(args: argparse.Namespace) -> None:
     start_time = time.monotonic()
 
     try:
-        cleanup_containers()
+        cleanup_containers(runtime)
         set_memcached_cores(memcached_cores)
         logger.job_start(LogJob.MEMCACHED, core_list(memcached_cores), args.memcached_threads)
         logger.custom_event(LogJob.SCHEDULER, f"policy={args.policy}")
 
-        while pending or running is not None:
+        while True:
             now = time.monotonic()
+            if now - start_time > args.mcperf_duration and not pending and running is None:
+                break
             if now - start_time > args.max_runtime:
-                raise TimeoutError(f"scheduler exceeded max runtime of {args.max_runtime}s")
+                if pending or running is not None:
+                    raise TimeoutError(f"scheduler exceeded max runtime of {args.max_runtime}s")
+                break
 
             sample = monitor.sample()
             window.add(sample)
@@ -503,15 +565,16 @@ def run_scheduler(args: argparse.Namespace) -> None:
                 )
 
             desired_memcached_cores = ALL_CORES[:desired_count]
-            if desired_count > memcached_count and running is not None:
-                desired_batch_cores = choose_batch_cores(
-                    args.policy,
-                    running.spec,
-                    desired_count,
-                    pressure_score,
-                    running=True,
-                )
-                running = update_container_cores(running, desired_batch_cores, logger)
+            if desired_count > memcached_count:
+                if running is not None:
+                    desired_batch_cores = choose_batch_cores(
+                        args.policy,
+                        running.spec,
+                        desired_count,
+                        pressure_score,
+                        running=True,
+                    )
+                    running = update_container_cores(runtime, running, desired_batch_cores, logger)
                 set_memcached_cores(desired_memcached_cores, logger)
             elif desired_count < memcached_count:
                 set_memcached_cores(desired_memcached_cores, logger)
@@ -523,7 +586,7 @@ def run_scheduler(args: argparse.Namespace) -> None:
                         pressure_score,
                         running=True,
                     )
-                    running = update_container_cores(running, desired_batch_cores, logger)
+                    running = update_container_cores(runtime, running, desired_batch_cores, logger)
             elif running is not None:
                 desired_batch_cores = choose_batch_cores(
                     args.policy,
@@ -532,7 +595,7 @@ def run_scheduler(args: argparse.Namespace) -> None:
                     pressure_score,
                     running=True,
                 )
-                running = update_container_cores(running, desired_batch_cores, logger)
+                running = update_container_cores(runtime, running, desired_batch_cores, logger)
             memcached_count = desired_count
 
             if reason != last_reason or pressure_score != last_score:
@@ -550,8 +613,8 @@ def run_scheduler(args: argparse.Namespace) -> None:
                 last_reason = reason
                 last_score = pressure_score
 
-            if running is not None and container_done(running):
-                finish_container(running, logger)
+            if running is not None and container_done(runtime, running):
+                finish_container(runtime, running, logger)
                 running = None
 
             if running is None and pending:
@@ -568,18 +631,18 @@ def run_scheduler(args: argparse.Namespace) -> None:
                         LogJob.SCHEDULER,
                         f"admit={next_job.name} risk={next_job.risk} score={pressure_score}",
                     )
-                    running = start_container(next_job, batch_cores, logger)
+                    running = start_container(runtime, next_job, batch_cores, logger)
 
             time.sleep(args.sample_interval)
     except Exception as exc:
         logger.custom_event(LogJob.SCHEDULER, f"error={exc}")
         if running is not None:
-            docker("rm", "-f", running.container, check=False)
+            runtime.remove(running.container)
             logger.job_end(log_job(running.spec.name))
         raise
     finally:
         logger.end()
-        cleanup_containers()
+        cleanup_containers(runtime)
 
 
 def main() -> int:
@@ -587,6 +650,7 @@ def main() -> int:
     parser.add_argument("--policy", choices=["static", "dynamic"], required=True)
     parser.add_argument("--log-file", required=True)
     parser.add_argument("--max-runtime", type=int, default=1800)
+    parser.add_argument("--mcperf-duration", type=int, default=1800)
     parser.add_argument("--sample-interval", type=float, default=5.0)
     parser.add_argument("--memcached-threads", type=int, default=4)
     args = parser.parse_args()

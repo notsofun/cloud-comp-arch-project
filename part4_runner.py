@@ -237,7 +237,8 @@ def start_controller(
     mem_node: str,
     policy: str,
     run_id: int,
-    duration: int,
+    mcperf_duration: int,
+    max_runtime: int,
     sample_interval: float,
     debug_dir: Path,
 ) -> tuple[subprocess.Popen, str]:
@@ -246,7 +247,8 @@ def start_controller(
         f"cd /tmp && python3 /tmp/cca_part4_controller.py "
         f"--policy {policy} "
         f"--log-file {remote_log} "
-        f"--max-runtime {duration} "
+        f"--mcperf-duration {mcperf_duration} "
+        f"--max-runtime {max_runtime} "
         f"--sample-interval {sample_interval}"
     )
     debug_file = debug_dir / f"controller_{policy}_{run_id}.log"
@@ -301,17 +303,19 @@ def run_one_policy(args: argparse.Namespace, policy: str, nodes: dict[str, str],
             mcperf_file,
         )
         time.sleep(5)
+        controller_runtime = args.duration + args.controller_grace
         controller, remote_log = start_controller(
             nodes["memcached"],
             policy,
             run_id,
             args.duration,
+            controller_runtime,
             args.sample_interval,
             debug_dir,
         )
 
         try:
-            wait_for_processes(controller, mcperf, args.duration + 900)
+            wait_for_processes(controller, mcperf, controller_runtime + 300)
         finally:
             stop_mcperf(nodes["agent"], nodes["measure"])
             try:
@@ -331,6 +335,7 @@ def main() -> int:
     parser.add_argument("--qps-min", type=int, default=5000)
     parser.add_argument("--qps-max", type=int, default=110000)
     parser.add_argument("--sample-interval", type=float, default=5.0)
+    parser.add_argument("--controller-grace", type=int, default=900, help="extra seconds for batch jobs after mcperf ends")
     parser.add_argument("--setup", action="store_true", help="install/configure memcached, Docker, and mcperf first")
     args = parser.parse_args()
 
