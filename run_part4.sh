@@ -10,6 +10,7 @@ QPS_MIN="${QPS_MIN:-5000}"
 QPS_MAX="${QPS_MAX:-110000}"
 SAMPLE_INTERVAL="${SAMPLE_INTERVAL:-5}"
 CONTROLLER_GRACE="${CONTROLLER_GRACE:-900}"
+DRAIN_MEMCACHED_CORES="${DRAIN_MEMCACHED_CORES:-1}"
 SETUP="${SETUP:-1}"
 CREATE_CLUSTER="${CREATE_CLUSTER:-0}"
 DELETE_CLUSTER="${DELETE_CLUSTER:-0}"
@@ -36,6 +37,7 @@ if [[ "$SETUP" == "1" ]]; then
     --qps-max "$QPS_MAX" \
     --sample-interval "$SAMPLE_INTERVAL" \
     --controller-grace "$CONTROLLER_GRACE" \
+    --drain-memcached-cores "$DRAIN_MEMCACHED_CORES" \
     --setup
 else
   python3 part4_runner.py \
@@ -47,7 +49,8 @@ else
     --qps-min "$QPS_MIN" \
     --qps-max "$QPS_MAX" \
     --sample-interval "$SAMPLE_INTERVAL" \
-    --controller-grace "$CONTROLLER_GRACE"
+    --controller-grace "$CONTROLLER_GRACE" \
+    --drain-memcached-cores "$DRAIN_MEMCACHED_CORES"
 fi
 
 if [[ "$GENERATE_PLOTS" == "1" ]]; then

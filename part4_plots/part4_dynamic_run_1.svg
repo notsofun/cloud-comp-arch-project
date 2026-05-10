@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="720" viewBox="0 0 1100 720">
+<rect x="0.0" y="0.0" width="1100.0" height="720.0" fill="#ffffff" opacity="1.00"/>
+<text x="32.0" y="38.0" font-family="Arial, sans-serif" font-size="22" text-anchor="start" fill="#172026">Part 4 dynamic run 1</text>
+<text x="32.0" y="62.0" font-family="Arial, sans-serif" font-size="12" text-anchor="start" fill="#4b5b63">mcperf p95 latency and target QPS; batch execution intervals below</text>
+<line x1="78.0" y1="330.0" x2="1040.0" y2="330.0" stroke="#9aa7ad" stroke-width="1.0"/>
+<line x1="78.0" y1="82.0" x2="78.0" y2="330.0" stroke="#9aa7ad" stroke-width="1.0"/>
+<text x="78.0" y="68.0" font-family="Arial, sans-serif" font-size="12" text-anchor="start" fill="#4b5b63">p95 latency (us)</text>
+<line x1="78.0" y1="108.6" x2="1040.0" y2="108.6" stroke="#cc3d3d" stroke-width="1.4" stroke-dasharray="6 5"/>
+<text x="1036.0" y="100.6" font-family="Arial, sans-serif" font-size="12" text-anchor="end" fill="#cc3d3d">0.8 ms SLO</text>
+<polyline points="78.0,222.2 86.1,113.5 94.2,160.1 102.3,229.8 110.3,210.0 118.4,198.6 126.5,216.8 134.6,171.3 142.7,105.1 150.8,217.8 158.8,203.5 166.9,271.0 175.0,311.7 183.1,166.7 191.2,270.3 199.3,293.5 207.3,204.1 215.4,261.4 223.5,251.6 231.6,294.9 239.7,308.6 247.8,290.3 255.8,250.8 263.9,149.7 272.0,259.3 280.1,121.2 288.2,291.9 296.3,117.1 304.4,144.8 312.4,246.2 320.5,300.3 328.6,234.8 336.7,124.8 344.8,249.0 352.9,163.3 360.9,269.1 369.0,253.0 377.1,252.8 385.2,230.0 393.3,307.8 401.4,270.4 409.4,271.3 417.5,104.5 425.6,105.3 433.7,165.6 441.8,318.7 449.9,133.9 457.9,194.3 466.0,243.0 474.1,291.0 482.2,243.5 490.3,277.8 498.4,183.4 506.5,159.5 514.5,235.1 522.6,310.6 530.7,178.6 538.8,232.0 546.9,209.1 555.0,236.6 563.0,273.4 571.1,144.5 579.2,215.5 587.3,302.4 595.4,245.2 603.5,208.0 611.5,159.4 619.6,163.7 627.7,271.2 635.8,190.2 643.9,289.7 652.0,194.8 660.1,306.1 668.1,205.4 676.2,299.6 684.3,189.6 692.4,176.7 700.5,174.4 708.6,319.3 716.6,277.0 724.7,265.6 732.8,131.5 740.9,213.7 749.0,319.4 757.1,313.5 765.1,285.3 773.2,114.0 781.3,149.3 789.4,175.0 797.5,240.8 805.6,162.3 813.6,252.9 821.7,155.5 829.8,216.5 837.9,220.0 846.0,280.0 854.1,108.3 862.2,283.8 870.2,301.4 878.3,223.4 886.4,185.9 894.5,176.4 902.6,284.3 910.7,174.0 918.7,175.4 926.8,176.7 934.9,122.7 943.0,256.1 951.1,190.0 959.2,274.9 967.2,244.5 975.3,274.0 983.4,164.6 991.5,170.9 999.6,257.2 1007.7,122.8 1015.7,267.8 1023.8,296.0 1031.9,121.3 1040.0,241.9" fill="none" stroke="#7b61b5" stroke-width="1.6"/>
+<polyline points="78.0,219.7 86.1,216.1 94.2,223.0 102.3,226.2 110.3,222.2 118.4,221.2 126.5,222.2 134.6,220.1 142.7,217.1 150.8,221.8 158.8,220.8 166.9,227.6 175.0,242.1 183.1,218.3 191.2,229.9 199.3,236.1 207.3,219.7 215.4,228.1 223.5,224.5 231.6,232.8 239.7,241.8 247.8,232.6 255.8,222.7 263.9,220.1 272.0,228.3 280.1,219.3 288.2,235.8 296.3,218.9 304.4,221.4 312.4,226.4 320.5,237.8 328.6,221.8 336.7,222.0 344.8,227.3 352.9,222.9 360.9,230.5 369.0,226.6 377.1,225.0 385.2,220.1 393.3,243.7 401.4,229.0 409.4,228.1 417.5,212.2 425.6,221.1 433.7,222.8 441.8,248.7 449.9,222.9 457.9,223.9 466.0,227.5 474.1,236.4 482.2,222.9 490.3,233.3 498.4,223.2 506.5,223.1 514.5,226.8 522.6,245.4 530.7,223.4 538.8,226.0 546.9,223.9 555.0,226.3 563.0,233.5 571.1,223.5 579.2,225.4 587.3,243.4 595.4,223.5 603.5,224.4 611.5,221.8 619.6,222.1 627.7,233.7 635.8,222.8 643.9,236.2 652.0,223.3 660.1,243.9 668.1,223.4 676.2,242.5 684.3,223.4 692.4,222.7 700.5,222.9 708.6,249.9 716.6,230.4 724.7,227.0 732.8,219.6 740.9,224.2 749.0,249.9 757.1,244.9 765.1,232.8 773.2,219.8 781.3,221.7 789.4,222.5 797.5,227.3 805.6,222.2 813.6,228.6 821.7,222.6 829.8,224.4 837.9,225.9 846.0,235.6 854.1,221.0 862.2,236.4 870.2,241.6 878.3,220.7 886.4,222.7 894.5,222.1 902.6,236.3 910.7,222.7 918.7,222.3 926.8,222.5 934.9,221.7 943.0,229.6 951.1,222.6 959.2,234.3 967.2,224.9 975.3,227.9 983.4,220.2 991.5,222.4 999.6,229.9 1007.7,221.3 1015.7,232.4 1023.8,237.6 1031.9,218.1 1040.0,227.6" fill="none" stroke="#1c7c8c" stroke-width="2.2"/>
+<text x="860.0" y="100.0" font-family="Arial, sans-serif" font-size="12" text-anchor="start" fill="#1c7c8c">p95 latency</text>
+<text x="952.0" y="100.0" font-family="Arial, sans-serif" font-size="12" text-anchor="start" fill="#7b61b5">target QPS</text>
+<line x1="73.0" y1="330.0" x2="78.0" y2="330.0" stroke="#9aa7ad" stroke-width="1.0"/>
+<text x="68.0" y="334.0" font-family="Arial, sans-serif" font-size="11" text-anchor="end" fill="#4b5b63">0</text>
+<line x1="73.0" y1="219.3" x2="78.0" y2="219.3" stroke="#9aa7ad" stroke-width="1.0"/>
+<text x="68.0" y="223.3" font-family="Arial, sans-serif" font-size="11" text-anchor="end" fill="#4b5b63">400</text>
+<line x1="73.0" y1="108.6" x2="78.0" y2="108.6" stroke="#9aa7ad" stroke-width="1.0"/>
+<text x="68.0" y="112.6" font-family="Arial, sans-serif" font-size="11" text-anchor="end" fill="#4b5b63">800</text>
+<line x1="73.0" y1="-2.1" x2="78.0" y2="-2.1" stroke="#9aa7ad" stroke-width="1.0"/>
+<text x="68.0" y="1.9" font-family="Arial, sans-serif" font-size="11" text-anchor="end" fill="#4b5b63">1200</text>
+<line x1="78.0" y1="630.0" x2="1040.0" y2="630.0" stroke="#9aa7ad" stroke-width="1.0"/>
+<text x="78.0" y="430.0" font-family="Arial, sans-serif" font-size="12" text-anchor="start" fill="#4b5b63">batch jobs and memcached core count</text>
+<rect x="78.1" y="608.0" width="129.2" height="20.0" fill="#4e79a7" opacity="0.82"/>
+<text x="68.0" y="624.0" font-family="Arial, sans-serif" font-size="11" text-anchor="end" fill="#4b5b63">vips</text>
+<rect x="207.6" y="580.0" width="634.1" height="20.0" fill="#f28e2b" opacity="0.82"/>
+<text x="68.0" y="596.0" font-family="Arial, sans-serif" font-size="11" text-anchor="end" fill="#4b5b63">streamcluster</text>
+<rect x="841.8" y="524.0" width="86.5" height="20.0" fill="#59a14f" opacity="0.82"/>
+<text x="68.0" y="540.0" font-family="Arial, sans-serif" font-size="11" text-anchor="end" fill="#4b5b63">freqmine</text>
+<rect x="928.4" y="496.0" width="50.3" height="20.0" fill="#e15759" opacity="0.82"/>
+<text x="68.0" y="512.0" font-family="Arial, sans-serif" font-size="11" text-anchor="end" fill="#4b5b63">canneal</text>
+<rect x="978.7" y="440.0" width="28.2" height="20.0" fill="#76b7b2" opacity="0.82"/>
+<text x="68.0" y="456.0" font-family="Arial, sans-serif" font-size="11" text-anchor="end" fill="#4b5b63">barnes</text>
+<rect x="1007.0" y="468.0" width="18.8" height="20.0" fill="#edc948" opacity="0.82"/>
+<text x="68.0" y="484.0" font-family="Arial, sans-serif" font-size="11" text-anchor="end" fill="#4b5b63">blackscholes</text>
+<rect x="1025.9" y="552.0" width="14.1" height="20.0" fill="#b07aa1" opacity="0.82"/>
+<text x="68.0" y="568.0" font-family="Arial, sans-serif" font-size="11" text-anchor="end" fill="#4b5b63">radix</text>
+<polyline points="78.0,490.5 84.5,450.0 150.9,490.5 156.9,450.0 171.0,490.5 177.1,450.0 189.2,490.5 215.7,450.0 259.9,490.5 268.0,450.0 296.2,490.5 332.5,450.0 374.7,490.5 382.8,450.0 463.3,490.5 467.3,450.0 553.8,490.5 565.9,450.0 584.0,490.5 596.2,450.0 670.6,490.5 676.7,450.0 743.1,490.5 753.2,450.0 785.4,490.5 789.4,450.0 801.5,571.5" fill="none" stroke="#222222" stroke-width="2.0"/>
+<text x="1036.0" y="548.0" font-family="Arial, sans-serif" font-size="11" text-anchor="end" fill="#222222">memcached cores</text>
+<line x1="78.0" y1="330.0" x2="78.0" y2="335.0" stroke="#9aa7ad" stroke-width="1.0"/>
+<text x="78.0" y="352.0" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#4b5b63">0</text>
+<line x1="318.5" y1="330.0" x2="318.5" y2="335.0" stroke="#9aa7ad" stroke-width="1.0"/>
+<text x="318.5" y="352.0" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#4b5b63">29</text>
+<line x1="559.0" y1="330.0" x2="559.0" y2="335.0" stroke="#9aa7ad" stroke-width="1.0"/>
+<text x="559.0" y="352.0" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#4b5b63">59</text>
+<line x1="799.5" y1="330.0" x2="799.5" y2="335.0" stroke="#9aa7ad" stroke-width="1.0"/>
+<text x="799.5" y="352.0" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#4b5b63">89</text>
+<line x1="1040.0" y1="330.0" x2="1040.0" y2="335.0" stroke="#9aa7ad" stroke-width="1.0"/>
+<text x="1040.0" y="352.0" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#4b5b63">119</text>
+<text x="559.0" y="372.0" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#4b5b63">mcperf interval index</text>
+</svg>

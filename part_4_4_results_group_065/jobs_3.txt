@@ -1,0 +1,257 @@
+2026-05-10T10:21:30.026927 start scheduler
+2026-05-10T10:21:30.069771 start memcached [0,1,2] 4
+2026-05-10T10:21:30.069880 custom scheduler policy%3Ddynamic
+2026-05-10T10:21:30.070417 custom scheduler score%3D3+reason%3Dhot-core%2Csoftirq-rising+memcached_cores%3D3+avg_all%3D0.40+max_core%3D1.00+rx_mbps%3D16.1+load1_norm%3D0.18
+2026-05-10T10:21:30.070453 custom scheduler admit%3Dvips+risk%3Dmedium+score%3D3
+2026-05-10T10:21:30.313315 start vips [3] 2
+2026-05-10T10:21:45.321620 custom scheduler score%3D4+reason%3Dhot-core%2Csoftirq-high+memcached_cores%3D3+avg_all%3D0.40+max_core%3D1.00+rx_mbps%3D28.1+load1_norm%3D0.27
+2026-05-10T10:21:55.329649 custom scheduler score%3D5+reason%3Dhot-core%2Csoftirq-high%2Cnetwork-trend-up+memcached_cores%3D3+avg_all%3D0.41+max_core%3D1.00+rx_mbps%3D29.7+load1_norm%3D0.33
+2026-05-10T10:22:00.369922 pause vips
+2026-05-10T10:22:00.411952 update_cores memcached [0,1,2,3]
+2026-05-10T10:22:00.412088 custom scheduler score%3D6+reason%3Dhot-core%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.57+max_core%3D1.00+rx_mbps%3D48.5+load1_norm%3D0.38
+2026-05-10T10:22:05.416212 custom scheduler score%3D3+reason%3Dsoftirq-high%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.36+max_core%3D0.39+rx_mbps%3D50.6+load1_norm%3D0.39
+2026-05-10T10:22:20.429551 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.33+max_core%3D0.36+rx_mbps%3D50.5+load1_norm%3D0.34
+2026-05-10T10:22:30.440658 custom scheduler score%3D1+reason%3Dsoftirq-rising+memcached_cores%3D4+avg_all%3D0.08+max_core%3D0.09+rx_mbps%3D12.4+load1_norm%3D0.31
+2026-05-10T10:22:35.443740 custom scheduler score%3D0+reason%3Dlow-pressure+memcached_cores%3D4+avg_all%3D0.06+max_core%3D0.06+rx_mbps%3D9.0+load1_norm%3D0.28
+2026-05-10T10:22:45.450850 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.42+max_core%3D0.47+rx_mbps%3D57.1+load1_norm%3D0.26
+2026-05-10T10:22:50.456433 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.44+max_core%3D0.49+rx_mbps%3D61.0+load1_norm%3D0.24
+2026-05-10T10:23:10.477464 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.53+max_core%3D0.59+rx_mbps%3D69.5+load1_norm%3D0.33
+2026-05-10T10:23:15.482551 custom scheduler score%3D1+reason%3Dsoftirq-rising+memcached_cores%3D4+avg_all%3D0.18+max_core%3D0.20+rx_mbps%3D33.0+load1_norm%3D0.30
+2026-05-10T10:23:30.495286 custom scheduler score%3D3+reason%3Dmem-util-rising%2Csoftirq-high+memcached_cores%3D4+avg_all%3D0.62+max_core%3D0.67+rx_mbps%3D79.4+load1_norm%3D0.29
+2026-05-10T10:23:35.500732 custom scheduler score%3D5+reason%3Dmem-util-rising%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.65+max_core%3D0.71+rx_mbps%3D82.9+load1_norm%3D0.33
+2026-05-10T10:23:45.512916 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.21+max_core%3D0.24+rx_mbps%3D39.0+load1_norm%3D0.32
+2026-05-10T10:23:50.517495 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.18+max_core%3D0.20+rx_mbps%3D36.0+load1_norm%3D0.29
+2026-05-10T10:23:55.521415 custom scheduler score%3D1+reason%3Dsoftirq-rising+memcached_cores%3D4+avg_all%3D0.18+max_core%3D0.20+rx_mbps%3D36.1+load1_norm%3D0.31
+2026-05-10T10:24:00.525228 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.53+max_core%3D0.58+rx_mbps%3D69.7+load1_norm%3D0.28
+2026-05-10T10:24:10.535470 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.55+max_core%3D0.61+rx_mbps%3D71.7+load1_norm%3D0.36
+2026-05-10T10:24:15.541071 custom scheduler score%3D1+reason%3Dsoftirq-rising+memcached_cores%3D4+avg_all%3D0.09+max_core%3D0.09+rx_mbps%3D13.2+load1_norm%3D0.33
+2026-05-10T10:24:20.543944 custom scheduler score%3D0+reason%3Dlow-pressure+memcached_cores%3D4+avg_all%3D0.06+max_core%3D0.07+rx_mbps%3D9.6+load1_norm%3D0.30
+2026-05-10T10:24:30.587287 update_cores memcached [0,1,2]
+2026-05-10T10:24:30.609158 unpause vips
+2026-05-10T10:24:30.609230 custom scheduler score%3D1+reason%3Dstable-low-pressure+memcached_cores%3D3+avg_all%3D0.15+max_core%3D0.17+rx_mbps%3D32.9+load1_norm%3D0.29
+2026-05-10T10:24:35.613683 custom scheduler score%3D4+reason%3Dhot-core%2Csoftirq-high+memcached_cores%3D3+avg_all%3D0.42+max_core%3D1.00+rx_mbps%3D34.1+load1_norm%3D0.31
+2026-05-10T10:24:40.639951 pause vips
+2026-05-10T10:24:40.677801 update_cores memcached [0,1,2,3]
+2026-05-10T10:24:40.677878 custom scheduler score%3D6+reason%3Dhot-core%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.42+max_core%3D1.00+rx_mbps%3D34.2+load1_norm%3D0.33
+2026-05-10T10:24:45.681883 custom scheduler score%3D5+reason%3Dmem-util-rising%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.64+max_core%3D0.70+rx_mbps%3D81.0+load1_norm%3D0.38
+2026-05-10T10:25:00.697552 custom scheduler score%3D3+reason%3Dsoftirq-high%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.20+max_core%3D0.22+rx_mbps%3D37.9+load1_norm%3D0.39
+2026-05-10T10:25:05.701768 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.19+max_core%3D0.19+rx_mbps%3D36.6+load1_norm%3D0.36
+2026-05-10T10:25:10.706159 custom scheduler score%3D1+reason%3Dsoftirq-rising+memcached_cores%3D4+avg_all%3D0.18+max_core%3D0.20+rx_mbps%3D36.6+load1_norm%3D0.33
+2026-05-10T10:25:15.710442 custom scheduler score%3D4+reason%3Dmem-util-rising%2Cnode-util-rising%2Csoftirq-high+memcached_cores%3D4+avg_all%3D0.68+max_core%3D0.75+rx_mbps%3D88.5+load1_norm%3D0.40
+2026-05-10T10:25:20.715910 custom scheduler score%3D8+reason%3Dmem-util-high%2Cnode-util-rising%2Cwarm-core%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.70+max_core%3D0.77+rx_mbps%3D89.9+load1_norm%3D0.45
+2026-05-10T10:25:30.727440 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.30+max_core%3D0.34+rx_mbps%3D49.7+load1_norm%3D0.44
+2026-05-10T10:25:35.731703 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.30+max_core%3D0.34+rx_mbps%3D48.9+load1_norm%3D0.40
+2026-05-10T10:26:10.765190 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.42+max_core%3D0.47+rx_mbps%3D60.1+load1_norm%3D0.31
+2026-05-10T10:26:15.769667 custom scheduler score%3D5+reason%3Dmem-util-rising%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.66+max_core%3D0.72+rx_mbps%3D86.8+load1_norm%3D0.33
+2026-05-10T10:26:25.782332 custom scheduler score%3D6+reason%3Dmem-util-rising%2Cnode-util-rising%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.69+max_core%3D0.75+rx_mbps%3D87.1+load1_norm%3D0.34
+2026-05-10T10:26:30.787587 custom scheduler score%3D1+reason%3Dsoftirq-rising+memcached_cores%3D4+avg_all%3D0.09+max_core%3D0.10+rx_mbps%3D22.0+load1_norm%3D0.31
+2026-05-10T10:26:45.798213 custom scheduler score%3D3+reason%3Dmem-util-rising%2Csoftirq-high+memcached_cores%3D4+avg_all%3D0.62+max_core%3D0.68+rx_mbps%3D78.2+load1_norm%3D0.24
+2026-05-10T10:26:50.803758 custom scheduler score%3D5+reason%3Dmem-util-rising%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.63+max_core%3D0.69+rx_mbps%3D78.9+load1_norm%3D0.26
+2026-05-10T10:27:10.825232 custom scheduler score%3D3+reason%3Dmem-util-rising%2Csoftirq-high+memcached_cores%3D4+avg_all%3D0.66+max_core%3D0.72+rx_mbps%3D83.5+load1_norm%3D0.33
+2026-05-10T10:27:15.830904 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.40+max_core%3D0.44+rx_mbps%3D56.7+load1_norm%3D0.33
+2026-05-10T10:27:40.856887 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.53+max_core%3D0.59+rx_mbps%3D70.0+load1_norm%3D0.35
+2026-05-10T10:27:45.860462 custom scheduler score%3D1+reason%3Dsoftirq-rising+memcached_cores%3D4+avg_all%3D0.10+max_core%3D0.10+rx_mbps%3D22.9+load1_norm%3D0.33
+2026-05-10T10:28:00.873549 custom scheduler score%3D3+reason%3Dmem-util-rising%2Csoftirq-high+memcached_cores%3D4+avg_all%3D0.57+max_core%3D0.64+rx_mbps%3D74.6+load1_norm%3D0.31
+2026-05-10T10:28:05.879267 custom scheduler score%3D5+reason%3Dmem-util-rising%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.59+max_core%3D0.65+rx_mbps%3D74.5+load1_norm%3D0.33
+2026-05-10T10:28:15.890271 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.38+max_core%3D0.42+rx_mbps%3D55.8+load1_norm%3D0.33
+2026-05-10T10:28:20.894791 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.38+max_core%3D0.43+rx_mbps%3D55.8+load1_norm%3D0.30
+2026-05-10T10:28:45.916198 custom scheduler score%3D0+reason%3Dlow-pressure+memcached_cores%3D4+avg_all%3D0.05+max_core%3D0.06+rx_mbps%3D8.1+load1_norm%3D0.20
+2026-05-10T10:29:00.955478 update_cores memcached [0,1,2]
+2026-05-10T10:29:00.973200 unpause vips
+2026-05-10T10:29:00.973270 custom scheduler score%3D0+reason%3Dstable-low-pressure+memcached_cores%3D3+avg_all%3D0.07+max_core%3D0.07+rx_mbps%3D14.8+load1_norm%3D0.15
+2026-05-10T10:29:05.976775 custom scheduler score%3D3+reason%3Dhot-core%2Csoftirq-rising+memcached_cores%3D3+avg_all%3D0.33+max_core%3D1.00+rx_mbps%3D14.7+load1_norm%3D0.20
+2026-05-10T10:29:10.980627 custom scheduler score%3D4+reason%3Dhot-core%2Csoftirq-rising%2Ccpu-trend-up+memcached_cores%3D3+avg_all%3D0.35+max_core%3D1.00+rx_mbps%3D16.6+load1_norm%3D0.23
+2026-05-10T10:29:16.032093 pause vips
+2026-05-10T10:29:16.087898 update_cores memcached [0,1,2,3]
+2026-05-10T10:29:16.087995 custom scheduler score%3D9+reason%3Dmem-util-high%2Cnode-util-rising%2Chot-core%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.81+max_core%3D1.00+rx_mbps%3D77.7+load1_norm%3D0.29
+2026-05-10T10:29:21.093450 custom scheduler score%3D5+reason%3Dmem-util-rising%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.62+max_core%3D0.68+rx_mbps%3D77.8+load1_norm%3D0.30
+2026-05-10T10:29:31.104310 custom scheduler score%3D2+reason%3Dsoftirq-rising%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.15+max_core%3D0.17+rx_mbps%3D32.6+load1_norm%3D0.32
+2026-05-10T10:29:36.108591 custom scheduler score%3D1+reason%3Dsoftirq-rising+memcached_cores%3D4+avg_all%3D0.15+max_core%3D0.15+rx_mbps%3D32.6+load1_norm%3D0.29
+2026-05-10T10:29:46.116842 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.28+max_core%3D0.31+rx_mbps%3D46.3+load1_norm%3D0.28
+2026-05-10T10:29:56.125657 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.28+max_core%3D0.31+rx_mbps%3D45.5+load1_norm%3D0.24
+2026-05-10T10:30:01.129550 custom scheduler score%3D1+reason%3Dsoftirq-rising+memcached_cores%3D4+avg_all%3D0.14+max_core%3D0.15+rx_mbps%3D30.1+load1_norm%3D0.22
+2026-05-10T10:30:16.178431 update_cores memcached [0,1,2]
+2026-05-10T10:30:16.198633 unpause vips
+2026-05-10T10:30:16.198744 custom scheduler score%3D1+reason%3Dstable-low-pressure+memcached_cores%3D3+avg_all%3D0.14+max_core%3D0.16+rx_mbps%3D30.1+load1_norm%3D0.19
+2026-05-10T10:30:21.202536 custom scheduler score%3D4+reason%3Dhot-core%2Csoftirq-high+memcached_cores%3D3+avg_all%3D0.39+max_core%3D0.99+rx_mbps%3D29.9+load1_norm%3D0.23
+2026-05-10T10:30:26.206969 custom scheduler score%3D5+reason%3Dhot-core%2Csoftirq-high%2Ccpu-trend-up+memcached_cores%3D3+avg_all%3D0.39+max_core%3D1.00+rx_mbps%3D30.2+load1_norm%3D0.26
+2026-05-10T10:30:46.223390 custom scheduler score%3D4+reason%3Dhot-core%2Csoftirq-high+memcached_cores%3D3+avg_all%3D0.45+max_core%3D1.00+rx_mbps%3D36.2+load1_norm%3D0.34
+2026-05-10T10:30:56.232216 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D3+avg_all%3D0.24+max_core%3D0.30+rx_mbps%3D39.0+load1_norm%3D0.35
+2026-05-10T10:30:56.237339 end vips
+2026-05-10T10:30:56.938989 custom scheduler admit%3Dbarnes+risk%3Dmedium+score%3D2
+2026-05-10T10:30:57.226937 start barnes [3] 2
+2026-05-10T10:31:02.265554 pause barnes
+2026-05-10T10:31:02.312268 update_cores memcached [0,1,2,3]
+2026-05-10T10:31:02.312375 custom scheduler score%3D7+reason%3Dmem-util-rising%2Cnode-util-rising%2Chot-core%2Csoftirq-high%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.76+max_core%3D0.95+rx_mbps%3D69.4+load1_norm%3D0.42
+2026-05-10T10:31:07.318198 custom scheduler score%3D3+reason%3Dsoftirq-high%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.54+max_core%3D0.60+rx_mbps%3D69.6+load1_norm%3D0.41
+2026-05-10T10:31:12.323688 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.41+max_core%3D0.46+rx_mbps%3D55.4+load1_norm%3D0.40
+2026-05-10T10:31:17.327228 custom scheduler score%3D1+reason%3Dsoftirq-rising+memcached_cores%3D4+avg_all%3D0.09+max_core%3D0.09+rx_mbps%3D21.3+load1_norm%3D0.38
+2026-05-10T10:31:32.339786 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.38+max_core%3D0.42+rx_mbps%3D54.2+load1_norm%3D0.34
+2026-05-10T10:31:37.344907 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.37+max_core%3D0.41+rx_mbps%3D54.2+load1_norm%3D0.33
+2026-05-10T10:31:52.358195 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.25+max_core%3D0.28+rx_mbps%3D42.2+load1_norm%3D0.29
+2026-05-10T10:32:02.366158 custom scheduler score%3D1+reason%3Dsoftirq-rising+memcached_cores%3D4+avg_all%3D0.13+max_core%3D0.14+rx_mbps%3D29.1+load1_norm%3D0.24
+2026-05-10T10:32:17.378034 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.26+max_core%3D0.29+rx_mbps%3D43.4+load1_norm%3D0.19
+2026-05-10T10:32:27.386626 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.25+max_core%3D0.28+rx_mbps%3D43.4+load1_norm%3D0.16
+2026-05-10T10:32:32.391008 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.26+max_core%3D0.29+rx_mbps%3D43.2+load1_norm%3D0.15
+2026-05-10T10:32:47.404903 custom scheduler score%3D1+reason%3Dsoftirq-rising+memcached_cores%3D4+avg_all%3D0.10+max_core%3D0.11+rx_mbps%3D24.3+load1_norm%3D0.12
+2026-05-10T10:32:57.413197 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.20+max_core%3D0.23+rx_mbps%3D34.3+load1_norm%3D0.10
+2026-05-10T10:33:07.424478 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.38+max_core%3D0.42+rx_mbps%3D56.1+load1_norm%3D0.12
+2026-05-10T10:33:17.435057 custom scheduler score%3D5+reason%3Dmem-util-rising%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.64+max_core%3D0.70+rx_mbps%3D81.1+load1_norm%3D0.16
+2026-05-10T10:33:27.445171 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.47+max_core%3D0.53+rx_mbps%3D60.5+load1_norm%3D0.25
+2026-05-10T10:33:32.448573 custom scheduler score%3D1+reason%3Dsoftirq-rising+memcached_cores%3D4+avg_all%3D0.07+max_core%3D0.08+rx_mbps%3D16.9+load1_norm%3D0.23
+2026-05-10T10:33:47.459936 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.28+max_core%3D0.31+rx_mbps%3D46.4+load1_norm%3D0.22
+2026-05-10T10:33:57.468934 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.29+max_core%3D0.32+rx_mbps%3D46.7+load1_norm%3D0.22
+2026-05-10T10:34:07.478645 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.29+max_core%3D0.33+rx_mbps%3D47.4+load1_norm%3D0.24
+2026-05-10T10:34:17.486627 custom scheduler score%3D0+reason%3Dlow-pressure+memcached_cores%3D4+avg_all%3D0.06+max_core%3D0.06+rx_mbps%3D10.6+load1_norm%3D0.21
+2026-05-10T10:34:27.493799 custom scheduler score%3D1+reason%3Dsoftirq-rising+memcached_cores%3D4+avg_all%3D0.19+max_core%3D0.21+rx_mbps%3D28.6+load1_norm%3D0.17
+2026-05-10T10:34:32.498789 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.49+max_core%3D0.54+rx_mbps%3D65.2+load1_norm%3D0.18
+2026-05-10T10:34:37.505617 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.49+max_core%3D0.55+rx_mbps%3D64.9+load1_norm%3D0.19
+2026-05-10T10:34:52.520898 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.20+max_core%3D0.22+rx_mbps%3D37.6+load1_norm%3D0.17
+2026-05-10T10:35:12.539274 custom scheduler score%3D1+reason%3Dsoftirq-rising+memcached_cores%3D4+avg_all%3D0.18+max_core%3D0.20+rx_mbps%3D30.7+load1_norm%3D0.12
+2026-05-10T10:35:17.542921 custom scheduler score%3D0+reason%3Dlow-pressure+memcached_cores%3D4+avg_all%3D0.06+max_core%3D0.06+rx_mbps%3D8.2+load1_norm%3D0.11
+2026-05-10T10:35:27.589208 update_cores memcached [0,1,2]
+2026-05-10T10:35:27.611123 unpause barnes
+2026-05-10T10:35:27.611190 custom scheduler score%3D1+reason%3Dstable-low-pressure+memcached_cores%3D3+avg_all%3D0.12+max_core%3D0.13+rx_mbps%3D20.0+load1_norm%3D0.09
+2026-05-10T10:35:32.615305 custom scheduler score%3D4+reason%3Dhot-core%2Csoftirq-high+memcached_cores%3D3+avg_all%3D0.51+max_core%3D1.00+rx_mbps%3D42.6+load1_norm%3D0.17
+2026-05-10T10:35:37.640998 pause barnes
+2026-05-10T10:35:37.682650 update_cores memcached [0,1,2,3]
+2026-05-10T10:35:37.682772 custom scheduler score%3D6+reason%3Dhot-core%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.50+max_core%3D1.00+rx_mbps%3D42.7+load1_norm%3D0.23
+2026-05-10T10:35:42.686968 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.19+max_core%3D0.21+rx_mbps%3D33.6+load1_norm%3D0.21
+2026-05-10T10:35:47.690251 custom scheduler score%3D1+reason%3Dsoftirq-rising+memcached_cores%3D4+avg_all%3D0.07+max_core%3D0.08+rx_mbps%3D17.6+load1_norm%3D0.20
+2026-05-10T10:35:57.697475 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.29+max_core%3D0.32+rx_mbps%3D40.5+load1_norm%3D0.18
+2026-05-10T10:36:02.702971 custom scheduler score%3D4+reason%3Dmem-util-rising%2Csoftirq-high%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.63+max_core%3D0.70+rx_mbps%3D79.4+load1_norm%3D0.21
+2026-05-10T10:36:07.709938 custom scheduler score%3D5+reason%3Dmem-util-rising%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.64+max_core%3D0.70+rx_mbps%3D79.4+load1_norm%3D0.26
+2026-05-10T10:36:12.715686 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.51+max_core%3D0.57+rx_mbps%3D68.3+load1_norm%3D0.28
+2026-05-10T10:36:22.725492 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.32+max_core%3D0.36+rx_mbps%3D49.5+load1_norm%3D0.27
+2026-05-10T10:36:32.733231 custom scheduler score%3D1+reason%3Dsoftirq-rising+memcached_cores%3D4+avg_all%3D0.10+max_core%3D0.11+rx_mbps%3D22.1+load1_norm%3D0.23
+2026-05-10T10:36:42.741438 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.29+max_core%3D0.33+rx_mbps%3D43.2+load1_norm%3D0.21
+2026-05-10T10:36:47.747470 custom scheduler score%3D4+reason%3Dmem-util-rising%2Csoftirq-high%2Ccpu-trend-up+memcached_cores%3D4+avg_all%3D0.61+max_core%3D0.68+rx_mbps%3D77.0+load1_norm%3D0.26
+2026-05-10T10:36:52.755209 custom scheduler score%3D5+reason%3Dmem-util-rising%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.60+max_core%3D0.67+rx_mbps%3D76.9+load1_norm%3D0.32
+2026-05-10T10:36:57.760755 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.53+max_core%3D0.59+rx_mbps%3D70.1+load1_norm%3D0.35
+2026-05-10T10:37:07.771350 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.41+max_core%3D0.47+rx_mbps%3D59.4+load1_norm%3D0.35
+2026-05-10T10:37:17.782981 custom scheduler score%3D3+reason%3Dmem-util-rising%2Csoftirq-high+memcached_cores%3D4+avg_all%3D0.64+max_core%3D0.71+rx_mbps%3D80.5+load1_norm%3D0.39
+2026-05-10T10:37:22.789334 custom scheduler score%3D5+reason%3Dmem-util-rising%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.63+max_core%3D0.70+rx_mbps%3D80.7+load1_norm%3D0.42
+2026-05-10T10:37:32.800012 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.46+max_core%3D0.51+rx_mbps%3D62.5+load1_norm%3D0.43
+2026-05-10T10:37:47.815609 custom scheduler score%3D1+reason%3Dsoftirq-rising+memcached_cores%3D4+avg_all%3D0.14+max_core%3D0.15+rx_mbps%3D31.6+load1_norm%3D0.41
+2026-05-10T10:38:02.863795 update_cores memcached [0,1,2]
+2026-05-10T10:38:02.885248 unpause barnes
+2026-05-10T10:38:02.885322 custom scheduler score%3D1+reason%3Dstable-low-pressure+memcached_cores%3D3+avg_all%3D0.12+max_core%3D0.13+rx_mbps%3D27.9+load1_norm%3D0.32
+2026-05-10T10:38:07.890409 custom scheduler score%3D3+reason%3Dhot-core%2Csoftirq-rising+memcached_cores%3D3+avg_all%3D0.37+max_core%3D1.00+rx_mbps%3D27.9+load1_norm%3D0.34
+2026-05-10T10:38:12.894580 custom scheduler score%3D5+reason%3Dhot-core%2Csoftirq-high%2Ccpu-trend-up+memcached_cores%3D3+avg_all%3D0.44+max_core%3D1.00+rx_mbps%3D34.7+load1_norm%3D0.35
+2026-05-10T10:38:22.939667 pause barnes
+2026-05-10T10:38:22.981378 update_cores memcached [0,1,2,3]
+2026-05-10T10:38:22.981592 custom scheduler score%3D6+reason%3Dhot-core%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.52+max_core%3D1.00+rx_mbps%3D44.8+load1_norm%3D0.47
+2026-05-10T10:38:27.986188 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.40+max_core%3D0.44+rx_mbps%3D55.3+load1_norm%3D0.43
+2026-05-10T10:38:32.991289 custom scheduler score%3D3+reason%3Dsoftirq-high%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.54+max_core%3D0.59+rx_mbps%3D69.8+load1_norm%3D0.40
+2026-05-10T10:38:48.009665 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.34+max_core%3D0.38+rx_mbps%3D51.4+load1_norm%3D0.42
+2026-05-10T10:39:03.023942 custom scheduler score%3D1+reason%3Dsoftirq-rising+memcached_cores%3D4+avg_all%3D0.12+max_core%3D0.13+rx_mbps%3D28.6+load1_norm%3D0.40
+2026-05-10T10:39:18.037536 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.25+max_core%3D0.28+rx_mbps%3D43.1+load1_norm%3D0.31
+2026-05-10T10:39:28.045905 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.27+max_core%3D0.30+rx_mbps%3D46.5+load1_norm%3D0.28
+2026-05-10T10:39:33.050241 custom scheduler score%3D3+reason%3Dsoftirq-high%2Ccpu-trend-up+memcached_cores%3D4+avg_all%3D0.33+max_core%3D0.36+rx_mbps%3D50.3+load1_norm%3D0.30
+2026-05-10T10:39:38.054986 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.33+max_core%3D0.37+rx_mbps%3D50.7+load1_norm%3D0.30
+2026-05-10T10:39:43.059254 custom scheduler score%3D1+reason%3Dsoftirq-rising+memcached_cores%3D4+avg_all%3D0.19+max_core%3D0.21+rx_mbps%3D31.8+load1_norm%3D0.32
+2026-05-10T10:39:48.062900 custom scheduler score%3D0+reason%3Dlow-pressure+memcached_cores%3D4+avg_all%3D0.05+max_core%3D0.06+rx_mbps%3D8.4+load1_norm%3D0.29
+2026-05-10T10:39:58.069497 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.30+max_core%3D0.33+rx_mbps%3D39.3+load1_norm%3D0.24
+2026-05-10T10:40:03.074727 custom scheduler score%3D4+reason%3Dmem-util-rising%2Csoftirq-high%2Ccpu-trend-up+memcached_cores%3D4+avg_all%3D0.61+max_core%3D0.68+rx_mbps%3D77.6+load1_norm%3D0.28
+2026-05-10T10:40:08.081583 custom scheduler score%3D5+reason%3Dmem-util-rising%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.63+max_core%3D0.70+rx_mbps%3D77.5+load1_norm%3D0.34
+2026-05-10T10:40:13.087603 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.52+max_core%3D0.57+rx_mbps%3D68.9+load1_norm%3D0.38
+2026-05-10T10:40:23.097336 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.42+max_core%3D0.46+rx_mbps%3D58.8+load1_norm%3D0.35
+2026-05-10T10:40:33.106545 custom scheduler score%3D1+reason%3Dsoftirq-rising+memcached_cores%3D4+avg_all%3D0.18+max_core%3D0.21+rx_mbps%3D36.3+load1_norm%3D0.34
+2026-05-10T10:40:43.116445 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.33+max_core%3D0.37+rx_mbps%3D51.1+load1_norm%3D0.30
+2026-05-10T10:40:53.125777 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.53+max_core%3D0.59+rx_mbps%3D68.7+load1_norm%3D0.37
+2026-05-10T10:41:08.141867 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.45+max_core%3D0.51+rx_mbps%3D63.2+load1_norm%3D0.31
+2026-05-10T10:41:33.163728 custom scheduler score%3D0+reason%3Dlow-pressure+memcached_cores%3D4+avg_all%3D0.06+max_core%3D0.06+rx_mbps%3D9.9+load1_norm%3D0.26
+2026-05-10T10:41:43.171322 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.31+max_core%3D0.35+rx_mbps%3D41.2+load1_norm%3D0.21
+2026-05-10T10:41:48.176399 custom scheduler score%3D4+reason%3Dmem-util-rising%2Csoftirq-high%2Ccpu-trend-up+memcached_cores%3D4+avg_all%3D0.60+max_core%3D0.67+rx_mbps%3D76.9+load1_norm%3D0.26
+2026-05-10T10:41:53.182631 custom scheduler score%3D5+reason%3Dmem-util-rising%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.60+max_core%3D0.66+rx_mbps%3D77.0+load1_norm%3D0.26
+2026-05-10T10:42:03.194197 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.51+max_core%3D0.57+rx_mbps%3D66.0+load1_norm%3D0.28
+2026-05-10T10:42:08.200555 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.49+max_core%3D0.54+rx_mbps%3D66.2+load1_norm%3D0.29
+2026-05-10T10:42:18.209835 custom scheduler score%3D1+reason%3Dsoftirq-rising+memcached_cores%3D4+avg_all%3D0.16+max_core%3D0.17+rx_mbps%3D33.2+load1_norm%3D0.28
+2026-05-10T10:42:33.258606 update_cores memcached [0,1,2]
+2026-05-10T10:42:33.283122 unpause barnes
+2026-05-10T10:42:33.283219 custom scheduler score%3D1+reason%3Dstable-low-pressure+memcached_cores%3D3+avg_all%3D0.13+max_core%3D0.14+rx_mbps%3D29.6+load1_norm%3D0.22
+2026-05-10T10:42:38.287134 custom scheduler score%3D3+reason%3Dhot-core%2Csoftirq-rising+memcached_cores%3D3+avg_all%3D0.38+max_core%3D0.99+rx_mbps%3D29.5+load1_norm%3D0.24
+2026-05-10T10:42:43.291428 custom scheduler score%3D5+reason%3Dhot-core%2Csoftirq-high%2Ccpu-trend-up+memcached_cores%3D3+avg_all%3D0.49+max_core%3D1.00+rx_mbps%3D40.0+load1_norm%3D0.28
+2026-05-10T10:42:53.325357 pause barnes
+2026-05-10T10:42:53.363353 update_cores memcached [0,1,2,3]
+2026-05-10T10:42:53.363455 custom scheduler score%3D6+reason%3Dhot-core%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.58+max_core%3D1.00+rx_mbps%3D50.7+load1_norm%3D0.38
+2026-05-10T10:42:58.367795 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.35+max_core%3D0.39+rx_mbps%3D53.1+load1_norm%3D0.37
+2026-05-10T10:43:03.372554 custom scheduler score%3D3+reason%3Dsoftirq-high%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.38+max_core%3D0.42+rx_mbps%3D55.8+load1_norm%3D0.36
+2026-05-10T10:43:08.378123 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.39+max_core%3D0.43+rx_mbps%3D55.8+load1_norm%3D0.35
+2026-05-10T10:43:18.385781 custom scheduler score%3D1+reason%3Dsoftirq-rising+memcached_cores%3D4+avg_all%3D0.12+max_core%3D0.13+rx_mbps%3D27.4+load1_norm%3D0.31
+2026-05-10T10:43:33.436065 update_cores memcached [0,1,2]
+2026-05-10T10:43:33.459930 unpause barnes
+2026-05-10T10:43:33.460102 custom scheduler score%3D1+reason%3Dstable-low-pressure+memcached_cores%3D3+avg_all%3D0.17+max_core%3D0.19+rx_mbps%3D35.8+load1_norm%3D0.24
+2026-05-10T10:43:38.463737 custom scheduler score%3D4+reason%3Dhot-core%2Csoftirq-high+memcached_cores%3D3+avg_all%3D0.44+max_core%3D1.00+rx_mbps%3D35.7+load1_norm%3D0.27
+2026-05-10T10:43:43.467618 custom scheduler score%3D5+reason%3Dhot-core%2Csoftirq-high%2Ccpu-trend-up+memcached_cores%3D3+avg_all%3D0.52+max_core%3D1.00+rx_mbps%3D44.4+load1_norm%3D0.28
+2026-05-10T10:43:48.495203 pause barnes
+2026-05-10T10:43:48.542351 update_cores memcached [0,1,2,3]
+2026-05-10T10:43:48.542481 custom scheduler score%3D6+reason%3Dhot-core%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.57+max_core%3D1.00+rx_mbps%3D52.0+load1_norm%3D0.32
+2026-05-10T10:43:53.546782 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.35+max_core%3D0.39+rx_mbps%3D52.1+load1_norm%3D0.32
+2026-05-10T10:43:58.551108 custom scheduler score%3D1+reason%3Dsoftirq-rising+memcached_cores%3D4+avg_all%3D0.19+max_core%3D0.20+rx_mbps%3D31.5+load1_norm%3D0.29
+2026-05-10T10:44:03.554532 custom scheduler score%3D0+reason%3Dlow-pressure+memcached_cores%3D4+avg_all%3D0.07+max_core%3D0.07+rx_mbps%3D14.4+load1_norm%3D0.27
+2026-05-10T10:44:13.562629 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.38+max_core%3D0.43+rx_mbps%3D50.6+load1_norm%3D0.23
+2026-05-10T10:44:18.568429 custom scheduler score%3D5+reason%3Dmem-util-rising%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.64+max_core%3D0.71+rx_mbps%3D80.9+load1_norm%3D0.25
+2026-05-10T10:44:33.584225 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.54+max_core%3D0.60+rx_mbps%3D69.5+load1_norm%3D0.36
+2026-05-10T10:44:38.589776 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.54+max_core%3D0.60+rx_mbps%3D69.2+load1_norm%3D0.37
+2026-05-10T10:45:03.615930 custom scheduler score%3D3+reason%3Dmem-util-rising%2Csoftirq-high+memcached_cores%3D4+avg_all%3D0.67+max_core%3D0.73+rx_mbps%3D83.2+load1_norm%3D0.36
+2026-05-10T10:45:08.622315 custom scheduler score%3D5+reason%3Dmem-util-rising%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.66+max_core%3D0.73+rx_mbps%3D83.4+load1_norm%3D0.38
+2026-05-10T10:45:18.633226 custom scheduler score%3D3+reason%3Dsoftirq-high%2Ccpu-trend-up+memcached_cores%3D4+avg_all%3D0.52+max_core%3D0.58+rx_mbps%3D68.1+load1_norm%3D0.34
+2026-05-10T10:45:23.639353 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.52+max_core%3D0.58+rx_mbps%3D67.9+load1_norm%3D0.31
+2026-05-10T10:46:03.678642 custom scheduler score%3D5+reason%3Dmem-util-rising%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.68+max_core%3D0.75+rx_mbps%3D85.7+load1_norm%3D0.35
+2026-05-10T10:46:13.688799 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.35+max_core%3D0.39+rx_mbps%3D44.5+load1_norm%3D0.40
+2026-05-10T10:46:18.692124 custom scheduler score%3D0+reason%3Dlow-pressure+memcached_cores%3D4+avg_all%3D0.06+max_core%3D0.06+rx_mbps%3D13.5+load1_norm%3D0.36
+2026-05-10T10:46:28.698990 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.32+max_core%3D0.37+rx_mbps%3D44.5+load1_norm%3D0.31
+2026-05-10T10:46:38.710353 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.52+max_core%3D0.58+rx_mbps%3D67.5+load1_norm%3D0.30
+2026-05-10T10:46:48.718167 custom scheduler score%3D0+reason%3Dlow-pressure+memcached_cores%3D4+avg_all%3D0.06+max_core%3D0.06+rx_mbps%3D9.5+load1_norm%3D0.27
+2026-05-10T10:46:58.724943 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.26+max_core%3D0.30+rx_mbps%3D39.5+load1_norm%3D0.27
+2026-05-10T10:47:08.734947 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.44+max_core%3D0.49+rx_mbps%3D61.9+load1_norm%3D0.36
+2026-05-10T10:47:13.740408 custom scheduler score%3D5+reason%3Dmem-util-rising%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.55+max_core%3D0.62+rx_mbps%3D72.3+load1_norm%3D0.33
+2026-05-10T10:47:28.756554 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.49+max_core%3D0.55+rx_mbps%3D66.4+load1_norm%3D0.45
+2026-05-10T10:47:43.771883 custom scheduler score%3D3+reason%3Dmem-util-rising%2Csoftirq-high+memcached_cores%3D4+avg_all%3D0.59+max_core%3D0.65+rx_mbps%3D75.3+load1_norm%3D0.42
+2026-05-10T10:47:48.779448 custom scheduler score%3D6+reason%3Dmem-util-high%2Cnode-util-rising%2Cwarm-core%2Csoftirq-high+memcached_cores%3D4+avg_all%3D0.72+max_core%3D0.79+rx_mbps%3D88.5+load1_norm%3D0.47
+2026-05-10T10:47:53.785846 custom scheduler score%3D8+reason%3Dmem-util-high%2Cnode-util-rising%2Cwarm-core%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.71+max_core%3D0.78+rx_mbps%3D88.5+load1_norm%3D0.51
+2026-05-10T10:47:58.793190 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.46+max_core%3D0.51+rx_mbps%3D62.6+load1_norm%3D0.53
+2026-05-10T10:48:03.797657 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.27+max_core%3D0.30+rx_mbps%3D44.9+load1_norm%3D0.51
+2026-05-10T10:48:43.837179 custom scheduler score%3D1+reason%3Dsoftirq-rising+memcached_cores%3D4+avg_all%3D0.14+max_core%3D0.15+rx_mbps%3D23.9+load1_norm%3D0.29
+2026-05-10T10:48:48.840808 custom scheduler score%3D0+reason%3Dlow-pressure+memcached_cores%3D4+avg_all%3D0.05+max_core%3D0.06+rx_mbps%3D8.8+load1_norm%3D0.27
+2026-05-10T10:48:58.877532 update_cores memcached [0,1,2]
+2026-05-10T10:48:58.895925 unpause barnes
+2026-05-10T10:48:58.895985 custom scheduler score%3D0+reason%3Dstable-low-pressure+memcached_cores%3D3+avg_all%3D0.05+max_core%3D0.05+rx_mbps%3D10.3+load1_norm%3D0.23
+2026-05-10T10:49:03.899944 custom scheduler score%3D3+reason%3Dhot-core%2Csoftirq-rising+memcached_cores%3D3+avg_all%3D0.34+max_core%3D1.00+rx_mbps%3D11.5+load1_norm%3D0.27
+2026-05-10T10:49:08.903309 custom scheduler score%3D4+reason%3Dhot-core%2Csoftirq-rising%2Ccpu-trend-up+memcached_cores%3D3+avg_all%3D0.32+max_core%3D1.00+rx_mbps%3D11.5+load1_norm%3D0.29
+2026-05-10T10:49:18.933317 pause barnes
+2026-05-10T10:49:18.972166 update_cores memcached [0,1,2,3]
+2026-05-10T10:49:18.972244 custom scheduler score%3D6+reason%3Dhot-core%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.42+max_core%3D1.00+rx_mbps%3D34.6+load1_norm%3D0.32
+2026-05-10T10:49:23.976096 custom scheduler score%3D2+reason%3Dsoftirq-rising%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.18+max_core%3D0.20+rx_mbps%3D34.6+load1_norm%3D0.32
+2026-05-10T10:49:33.984091 custom scheduler score%3D1+reason%3Dsoftirq-rising+memcached_cores%3D4+avg_all%3D0.09+max_core%3D0.10+rx_mbps%3D23.9+load1_norm%3D0.27
+2026-05-10T10:49:43.991264 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.27+max_core%3D0.31+rx_mbps%3D44.1+load1_norm%3D0.23
+2026-05-10T10:49:48.996210 custom scheduler score%3D4+reason%3Dsoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.38+max_core%3D0.42+rx_mbps%3D56.0+load1_norm%3D0.25
+2026-05-10T10:50:04.012389 custom scheduler score%3D5+reason%3Dmem-util-rising%2Csoftirq-high%2Ccpu-trend-up%2Cnetwork-trend-up+memcached_cores%3D4+avg_all%3D0.59+max_core%3D0.65+rx_mbps%3D75.5+load1_norm%3D0.25
+2026-05-10T10:50:24.037426 custom scheduler score%3D4+reason%3Dmem-util-rising%2Cnode-util-rising%2Csoftirq-high+memcached_cores%3D4+avg_all%3D0.69+max_core%3D0.75+rx_mbps%3D85.6+load1_norm%3D0.29
+2026-05-10T10:50:29.043239 custom scheduler score%3D3+reason%3Dmem-util-rising%2Csoftirq-high+memcached_cores%3D4+avg_all%3D0.62+max_core%3D0.68+rx_mbps%3D79.6+load1_norm%3D0.31
+2026-05-10T10:51:04.083217 custom scheduler score%3D2+reason%3Dsoftirq-high+memcached_cores%3D4+avg_all%3D0.53+max_core%3D0.57+rx_mbps%3D68.3+load1_norm%3D0.39
+2026-05-10T10:51:19.099622 custom scheduler score%3D3+reason%3Dmem-util-rising%2Csoftirq-high+memcached_cores%3D4+avg_all%3D0.55+max_core%3D0.61+rx_mbps%3D71.3+load1_norm%3D0.43
+2026-05-10T10:51:29.110181 custom scheduler score%3D1+reason%3Dsoftirq-rising+memcached_cores%3D4+avg_all%3D0.20+max_core%3D0.22+rx_mbps%3D24.7+load1_norm%3D0.39
+2026-05-10T10:51:34.113080 custom scheduler drain_after_mcperf+memcached_cores%3D1
+2026-05-10T10:51:34.139599 update_cores memcached [0]
+2026-05-10T10:51:34.161135 update_cores barnes [1,2,3]
+2026-05-10T10:51:34.176397 unpause barnes
+2026-05-10T10:51:34.176450 custom scheduler score%3D0+reason%3Ddrain-after-mcperf+memcached_cores%3D1+avg_all%3D0.01+max_core%3D0.01+rx_mbps%3D0.0+load1_norm%3D0.35
+2026-05-10T10:52:09.198562 end barnes
+2026-05-10T10:52:09.218010 custom scheduler admit%3Dstreamcluster+risk%3Dhigh+score%3D0
+2026-05-10T10:52:09.396509 start streamcluster [1,2,3] 2
+2026-05-10T10:55:44.546626 end streamcluster
+2026-05-10T10:55:44.564084 custom scheduler admit%3Dfreqmine+risk%3Dhigh+score%3D0
+2026-05-10T10:55:44.739472 start freqmine [1,2,3] 2
+2026-05-10T10:58:59.860307 end freqmine
+2026-05-10T10:58:59.917845 custom scheduler admit%3Dcanneal+risk%3Dhigh+score%3D0
+2026-05-10T10:59:00.099185 start canneal [1,2,3] 2
+2026-05-10T11:01:00.174394 end canneal
+2026-05-10T11:01:00.210859 custom scheduler admit%3Dblackscholes+risk%3Dlow+score%3D0
+2026-05-10T11:01:00.393603 start blackscholes [1,2,3] 2
+2026-05-10T11:01:45.421813 end blackscholes
+2026-05-10T11:01:45.591435 custom scheduler admit%3Dradix+risk%3Dlow+score%3D0
+2026-05-10T11:01:45.763580 start radix [1,2,3] 1
+2026-05-10T11:02:20.783956 end radix
+2026-05-10T11:02:25.801771 end scheduler

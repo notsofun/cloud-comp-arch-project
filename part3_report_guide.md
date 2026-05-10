@@ -68,3 +68,65 @@ Then discuss:
 - whether either policy violates the 1 ms p95 SLO
 - whether the evolved policy found a materially different placement or thread allocation
 - limitations, such as run-to-run noise, VM heterogeneity, and mcperf measurement variance
+
+## Part 4 strategy log
+
+Use this section as notes for the Part 4 report. The implementation evolved through the following versions.
+
+### Version 1: proactive headroom controller
+
+- Controller file: `part4_controller.py`
+- Runner file: `part4_runner.py`
+- Goal: protect the 0.8 ms memcached p95 SLO while opportunistically running PARSEC/SPLASH jobs on the same 4-core `memcache-server`.
+- Memcached is run directly on the VM and pinned with `taskset`.
+- Batch jobs are launched as Docker containers with native inputs.
+- The policy watches CPU utilization, softirq share, load average, and network RX rate.
+- It converts these signals into a pressure score.
+- When pressure is high, the policy gives more cores to memcached and may pause or shrink the running batch job.
+- When pressure is low, it admits a batch job on leftover cores.
+
+### Version 2: SDK and submission compliance
+
+- Replaced direct Docker CLI calls in the controller with the Docker Python SDK.
+- Kept `taskset` for memcached because Part 4 explicitly recommends using process CPU affinity for memcached.
+- Added dynamic Docker CPU updates through SDK `container.update(cpuset_cpus=...)`.
+- Added support for `pause` and `unpause` events.
+- Ensured the job log uses the required `start`, `end`, `update_cores`, `pause`, `unpause`, and `custom` event format.
+- Added `part4_generate_plots.py` to generate SVG plots from `jobs_i.txt` and `mcperf_i.txt`.
+
+### Version 3: controller grace period
+
+- Problem observed: `mcperf -t 1800` can finish while some batch jobs are still running.
+- Earlier behavior: the controller could fail at exactly 1800 seconds if not all jobs had completed.
+- Change: `part4_runner.py` passes `--max-runtime = duration + controller_grace`.
+- Default/useful setting: `CONTROLLER_GRACE=1800`.
+- This keeps the 30-minute mcperf measurement intact while allowing remaining batch jobs to finish and produce complete `jobs_i.txt` files.
+
+### Version 4: drain mode after mcperf
+
+- Problem observed: after mcperf finished, the controller still protected memcached as if latency was being measured.
+- This wasted resources during the post-measurement cleanup phase.
+- Change: added drain mode to `part4_controller.py`.
+- Trigger: after `--mcperf-duration` has elapsed.
+- Behavior: reduce memcached to `DRAIN_MEMCACHED_CORES`, default `1`.
+- Behavior: give all remaining cores to the running or next batch job.
+- Command example:
+  `SETUP=0 POLICY_SET=dynamic RUNS=3 CONTROLLER_GRACE=1800 DRAIN_MEMCACHED_CORES=1 bash run_part4.sh`
+- Report phrasing: latency-sensitive protection is active during the 1800-second mcperf measurement; after measurement ends, the controller switches to a drain phase to complete any leftover batch work without wasting cores.
+
+### Current recommended run commands
+
+- New cluster:
+  `SETUP=1 POLICY_SET=dynamic RUNS=3 CONTROLLER_GRACE=1800 DRAIN_MEMCACHED_CORES=1 bash run_part4.sh`
+- Same cluster rerun:
+  `SETUP=0 POLICY_SET=dynamic RUNS=3 CONTROLLER_GRACE=1800 DRAIN_MEMCACHED_CORES=1 bash run_part4.sh`
+- One-run smoke test:
+  `SETUP=0 POLICY_SET=dynamic RUNS=1 CONTROLLER_GRACE=1800 DRAIN_MEMCACHED_CORES=1 bash run_part4.sh`
+
+### Result interpretation notes
+
+- `mcperf_i.txt` contains the latency and QPS data. Check max p95 and count p95 intervals above 800 us.
+- `jobs_i.txt` contains scheduler and batch execution events. Compute makespan as the last batch `end` timestamp minus the first batch `start` timestamp.
+- A complete run needs both files from the same run number.
+- `jobs_i.txt` should end with `end scheduler`.
+- Every batch job that has a `start` event should also have an `end` event.

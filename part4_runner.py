@@ -239,6 +239,7 @@ def start_controller(
     run_id: int,
     mcperf_duration: int,
     max_runtime: int,
+    drain_memcached_cores: int,
     sample_interval: float,
     debug_dir: Path,
 ) -> tuple[subprocess.Popen, str]:
@@ -249,6 +250,7 @@ def start_controller(
         f"--log-file {remote_log} "
         f"--mcperf-duration {mcperf_duration} "
         f"--max-runtime {max_runtime} "
+        f"--drain-memcached-cores {drain_memcached_cores} "
         f"--sample-interval {sample_interval}"
     )
     debug_file = debug_dir / f"controller_{policy}_{run_id}.log"
@@ -310,6 +312,7 @@ def run_one_policy(args: argparse.Namespace, policy: str, nodes: dict[str, str],
             run_id,
             args.duration,
             controller_runtime,
+            args.drain_memcached_cores,
             args.sample_interval,
             debug_dir,
         )
@@ -336,6 +339,7 @@ def main() -> int:
     parser.add_argument("--qps-max", type=int, default=110000)
     parser.add_argument("--sample-interval", type=float, default=5.0)
     parser.add_argument("--controller-grace", type=int, default=900, help="extra seconds for batch jobs after mcperf ends")
+    parser.add_argument("--drain-memcached-cores", type=int, default=1)
     parser.add_argument("--setup", action="store_true", help="install/configure memcached, Docker, and mcperf first")
     args = parser.parse_args()
 

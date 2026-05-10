@@ -498,6 +498,13 @@ def choose_batch_cores(
     return tuple(leftover[:target])
 
 
+def choose_drain_batch_cores(job: BatchJob, memcached_count: int) -> tuple[int, ...]:
+    leftover = ALL_CORES[memcached_count:]
+    if not leftover:
+        return ()
+    return tuple(leftover)
+
+
 def select_next_job(
     policy: str,
     pending: list[BatchJob],
@@ -534,6 +541,7 @@ def run_scheduler(args: argparse.Namespace) -> None:
     last_reason = ""
     last_score = -1
     start_time = time.monotonic()
+    drain_mode = False
 
     try:
         cleanup_containers(runtime)
@@ -543,7 +551,8 @@ def run_scheduler(args: argparse.Namespace) -> None:
 
         while True:
             now = time.monotonic()
-            if now - start_time > args.mcperf_duration and not pending and running is None:
+            mcperf_done = now - start_time > args.mcperf_duration
+            if mcperf_done and not pending and running is None:
                 break
             if now - start_time > args.max_runtime:
                 if pending or running is not None:
@@ -553,7 +562,17 @@ def run_scheduler(args: argparse.Namespace) -> None:
             sample = monitor.sample()
             window.add(sample)
 
-            if args.policy == "static":
+            if mcperf_done:
+                desired_count = max(1, min(len(ALL_CORES), args.drain_memcached_cores))
+                pressure_score = 0
+                reason = "drain-after-mcperf"
+                if not drain_mode:
+                    logger.custom_event(
+                        LogJob.SCHEDULER,
+                        f"drain_after_mcperf memcached_cores={desired_count}",
+                    )
+                    drain_mode = True
+            elif args.policy == "static":
                 desired_count = static_memcached_count()
                 pressure_score, reason = window.pressure_score(sample, desired_count)
             else:
@@ -567,18 +586,36 @@ def run_scheduler(args: argparse.Namespace) -> None:
             desired_memcached_cores = ALL_CORES[:desired_count]
             if desired_count > memcached_count:
                 if running is not None:
-                    desired_batch_cores = choose_batch_cores(
-                        args.policy,
-                        running.spec,
-                        desired_count,
-                        pressure_score,
-                        running=True,
-                    )
+                    if drain_mode:
+                        desired_batch_cores = choose_drain_batch_cores(running.spec, desired_count)
+                    else:
+                        desired_batch_cores = choose_batch_cores(
+                            args.policy,
+                            running.spec,
+                            desired_count,
+                            pressure_score,
+                            running=True,
+                        )
                     running = update_container_cores(runtime, running, desired_batch_cores, logger)
                 set_memcached_cores(desired_memcached_cores, logger)
             elif desired_count < memcached_count:
                 set_memcached_cores(desired_memcached_cores, logger)
                 if running is not None:
+                    if drain_mode:
+                        desired_batch_cores = choose_drain_batch_cores(running.spec, desired_count)
+                    else:
+                        desired_batch_cores = choose_batch_cores(
+                            args.policy,
+                            running.spec,
+                            desired_count,
+                            pressure_score,
+                            running=True,
+                        )
+                    running = update_container_cores(runtime, running, desired_batch_cores, logger)
+            elif running is not None:
+                if drain_mode:
+                    desired_batch_cores = choose_drain_batch_cores(running.spec, desired_count)
+                else:
                     desired_batch_cores = choose_batch_cores(
                         args.policy,
                         running.spec,
@@ -586,15 +623,6 @@ def run_scheduler(args: argparse.Namespace) -> None:
                         pressure_score,
                         running=True,
                     )
-                    running = update_container_cores(runtime, running, desired_batch_cores, logger)
-            elif running is not None:
-                desired_batch_cores = choose_batch_cores(
-                    args.policy,
-                    running.spec,
-                    desired_count,
-                    pressure_score,
-                    running=True,
-                )
                 running = update_container_cores(runtime, running, desired_batch_cores, logger)
             memcached_count = desired_count
 
@@ -618,13 +646,17 @@ def run_scheduler(args: argparse.Namespace) -> None:
                 running = None
 
             if running is None and pending:
-                next_job, batch_cores = select_next_job(
-                    args.policy,
-                    pending,
-                    memcached_count,
-                    pressure_score,
-                    window,
-                )
+                if drain_mode:
+                    next_job = pending[0]
+                    batch_cores = choose_drain_batch_cores(next_job, memcached_count)
+                else:
+                    next_job, batch_cores = select_next_job(
+                        args.policy,
+                        pending,
+                        memcached_count,
+                        pressure_score,
+                        window,
+                    )
                 if next_job is not None and batch_cores:
                     pending.remove(next_job)
                     logger.custom_event(
@@ -651,6 +683,7 @@ def main() -> int:
     parser.add_argument("--log-file", required=True)
     parser.add_argument("--max-runtime", type=int, default=1800)
     parser.add_argument("--mcperf-duration", type=int, default=1800)
+    parser.add_argument("--drain-memcached-cores", type=int, default=1)
     parser.add_argument("--sample-interval", type=float, default=5.0)
     parser.add_argument("--memcached-threads", type=int, default=4)
     args = parser.parse_args()
