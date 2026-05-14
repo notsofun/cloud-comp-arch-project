@@ -1,0 +1,172 @@
+\section*{Part 1}
+
+Using the instructions provided in the project description, run memcached alone (i.e., no interference), and with each iBench source of interference (cpu, l1d, l1i, l2, llc, membw). For Part 1, you must use the following \texttt{mcperf} command, which varies the target QPS from 5000 to 80000 in increments of 5000 (and has a warm-up time of 2 seconds with the addition of \texttt{-w 2}):
+
+\begin{verbatim}
+$ ./mcperf -s MEMCACHED_IP --loadonly
+$ ./mcperf -s MEMCACHED_IP -a INTERNAL_AGENT_IP  \
+           --noload -T 8 -C 8 -D 4 -Q 1000 -c 8 -w 2 -t 5 \ 
+           --scan 5000:80000:5000
+\end{verbatim}
+
+\noindent Repeat the run for each of the 7 configurations (without interference, and the 6 interference types) {\color{red} \textbf{at least 3 times}} (3 should be sufficient in this case), and collect the performance measurements (i.e. the \texttt{client-measure} VM output).
+
+\noindent\textbf{\underline{Reminder:}} after you have collected all the measurements, make sure you \textbf{{\color{red}delete your cluster}}. Otherwise, you will easily use up the cloud credits. See the project description for instructions how to make sure your cluster is deleted.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% QUESTION 1A
+
+\begin{enumerate}[label=(\alph*)]
+    \setcounter{enumi}{0}
+
+    \item Plot a line graph with the following stipulations:
+    \begin{itemize}
+        \item Queries per second (QPS) on the x-axis (the x-axis should range from 0 to 80K).\\
+        (\textbf{note:} the actual achieved QPS, not the target QPS)
+        \item 95th percentile latency on the y-axis (the y-axis should range from 0 to 6 ms).
+        \item Label your axes.
+        \item 7 lines, one for each configuration. Add a legend.
+        \item State how many runs you averaged across and include error bars at each point in both dimensions.
+        % \item The readability of your plot will be part of your grade.
+    \end{itemize}
+    
+    % \textbf{The shape of the curves depends on many factors and may differ across groups. However, that does not imply that your solutions are wrong.} 
+    
+\end{enumerate}
+
+\textbf{Answer:} % Here you place your solution.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% QUESTION 1B
+
+\begin{enumerate}[label=(\alph*)]
+    \setcounter{enumi}{1}
+    
+    \item How is the tail latency and saturation point (the “knee in the curve”) of memcached affected by each type of interference? What is your reasoning for these effects? Briefly describe your hypothesis.
+    
+\end{enumerate}
+
+\textbf{Answer:}
+\begin{itemize}
+    \item \texttt{ibench-cpu}: % What effect does it have on memcached? - Here you place your solution.  
+    
+    \textit{Explanation:} % What is the resoning behind this effect? - Here you place your solution.
+    
+    \item \texttt{ibench-l1d}: % What effect does it have on memcached? - Here you place your solution.
+    
+    \textit{Explanation:} % What is the resoning behind this effect? - Here you place your solution.
+
+    \item \texttt{ibench-l1i}: %What effect does it have on memcached? - Here you place your solution.
+    
+    \textit{Explanation:} % What is the resoning behind this effect? - Here you place your solution.
+
+    \item \texttt{ibench-l2}: % What effect does it have on memcached? - Here you place your solution.
+    
+    \textit{Explanation:} % What is the resoning behind this effect? - Here you place your solution.
+
+    \item \texttt{ibench-llc}: % What effect does it have on memcached? - Here you place your solution.
+    
+    \textit{Explanation:} % What is the resoning behind this effect? - Here you place your solution.
+
+    \item \texttt{ibench-membw}: % What effect does it have on memcached? - Here you place your solution.
+    
+    \textit{Explanation:} %What is the resoning behind this effect? - Here you place your solution.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% QUESTION 1C
+
+\begin{enumerate}[label=(\alph*)]
+    \setcounter{enumi}{2}
+    \item Processor affinity:
+    \begin{itemize}
+        \item Explain the use of the \texttt{taskset} command in the container commands for memcached and iBench in the provided scripts.
+        
+        \textbf{Answer:} % Here you place your solution.
+        \\
+
+        \item Why do we run some of the iBench benchmarks on the same core as memcached and others on a different core? Give an explanation for each iBench benchmark.
+
+        \textbf{Answer:} % Here you place your solution.
+    \end{itemize}
+    
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% QUESTION 1D
+    
+\begin{enumerate}[label=(\alph*)]
+    \setcounter{enumi}{3}
+    
+    \item Assuming a service level objective (SLO) for memcached of up to 2~ms 95th percentile latency at 35K QPS, which iBench source of interference can safely be collocated with memcached without violating this SLO? Briefly explain your reasoning.
+            
+\end{enumerate}
+
+\textbf{Answer:} % Here you place your solution.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% QUESTION 1E
+    
+\begin{enumerate}[label=(\alph*)]
+    \setcounter{enumi}{4}
+    
+    \item In the lectures you have seen queueing theory. 
+    \begin{itemize}
+        \item Is the project experiment above (ignoring client measure) an open system or a closed system? Explain why.
+
+        \textbf{Answer:} % Here you place your solution.
+        \\
+
+        \item What is the number of clients in the system? How did you find this number?
+
+        \textbf{Answer:} % Here you place your solution.
+        \\
+
+        \item Sketch a diagram of the queueing system modeling the experiment above. Give a brief explanation of the sketch.
+   
+        \textbf{Answer:} % Here you place your solution.
+        \\
+
+        \item Provide an expression for the average response time of this system. Explain each term in this expression and match it to the parameters of the project experiment.
+        
+        \textbf{Answer:} % Here you place your solution.       
+    \end{itemize}
+            
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% QUESTION 1F
+    
+\begin{enumerate}[label=(\alph*)]
+    \setcounter{enumi}{5}
+    
+    \item Below we ask you to do a theoretical cost analysis of the above experiments you ran and compare with the actual cost of your experiments, for which you will \textbf{need to track the total runtime} of the experiments, from deploying the cluster to its deletion. To find the actual cost, you can look at the \textbf{detailed billing report} after it is available on your Google Cloud project. 
+
+    For the theoretical one, it would be helpful to check the official pricing calculator (\href{https://cloud.google.com/products/calculator?hl=en}{link}) or given individual pricing list (\href{https://cloud.google.com/compute/all-pricing}{link}). You also need to see the \texttt{machineType} and \texttt{subnets} parameters of each VM configuration by examining \texttt{part1.yaml}. 
+    
+    Note you can see the actual configuration details (e.g. disk size and type) of each VM configuration by looking at each individual VM instance after you deployed your cluster in \texttt{Compute Engine > VM instances > <your vm name>}.
+
+    \begin{itemize}
+        \item What is the cost per hour (in USD) for running each VM, according to the VM pricing?
+
+        \textbf{Answer:} % Here you place your solution.
+        \\
+
+        \item How much time (approximately) did your experiments take? 
+
+        \textbf{Answer:} % Here you place your solution.
+        \\
+
+        \item What is the expected (theoretical) total cost and what was the actual cost of running those experiments?
+   
+        \textbf{Answer:} % Here you place your solution.
+        \\
+
+        \item Does the expected cost match the actual cost? (i.e. equivalent $\pm 0.01$ if rounded up to 2 decimals). If they do not match, explain how you could achieve a more accurate estimate of the cost.
+        
+        \textbf{Answer:} % Here you place your solution.
+    \end{itemize}
+            
+\end{enumerate}
+
+\newpage

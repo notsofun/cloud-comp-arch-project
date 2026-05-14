@@ -1,0 +1,62 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{tikz}
+\usepackage{fancyvrb}
+\usepackage{enumitem}
+\usepackage{hhline}
+\usepackage[colorlinks = true,
+            linkcolor = blue,
+            urlcolor  = blue,
+            citecolor = blue,
+            anchorcolor = blue]{hyperref}
+
+\usepackage{colortbl}
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+\begin{document}
+
+\input{titlepage}
+
+
+\section*{Instructions}
+
+\begin{itemize}
+    \item {\color{red}\textbf{Please do not modify the template!}} Except for adding your solutions in the labeled places, and inputting your group number, names and legi-NR on the title page. 
+    
+    \textbf{Divergence from the template can lead to subtraction of points on graded parts of the project.}
+    % \item Parts 1 and 2 of the project should be answered in {\color{red}\textbf{maximum 6 pages}} (including the questions, and excluding the title page and this page, containing the instructions. The maximum total number of pages is 8). 
+    
+    % \textbf{If you exceed the allowed space, points may be subtracted}.
+    \item Parts 1 and 2 of the project are \textbf{ungraded}. They will help you analyze the behavior of the applications you will have to run on parts 3 and 4 (graded), for which you will have to design a scheduling policy \textbf{based on the information} you will gather on \textbf{parts 1 and 2}.
+
+    \item Be conservative with your credits! Parts 3 and 4 might need extra credits for experimentation. Parts 1 and 2 should cost you approximately \textbf{15 USD}. %%FIXME when this info is available (if available)
+
+    \item \textbf{Use of AI Tools}: The use of AI tools must adhere to \href{https://ethz.ch/staffnet/en/news-and-events/internal-news/archive/2024/07/new-guidelines-for-the-use-of-generative-ai-in-education.html}{ETH regulations}. \textbf{You take responsibility for the content you submit}. You must disclose any use of GenAI and other AI tools in your work and avoid sharing copyrighted, private, or confidential information with commercial AI platforms. Failure to comply with these guidelines may result in disciplinary action.
+
+\end{itemize}
+
+\newpage
+
+\include{part1}
+\include{part2}
+
+\definecolor{barnes}{HTML}{AACCCA}
+\definecolor{blackscholes}{HTML}{CCA000}
+\definecolor{canneal}{HTML}{CCCCAA}
+\definecolor{freqmine}{HTML}{0CCA00}
+\definecolor{radix}{HTML}{00CCA0}
+\definecolor{streamcluster}{HTML}{CCACCA}
+\definecolor{vips}{HTML}{CC0A00}
+
+\newcommand{\colored}[1]{\textcolor{#1}{#1}}
+\newcommand{\coloredcell}[1]{\cellcolor{#1} #1}
+
+\include{part3}
+\include{part4}
+
+\end{document}
