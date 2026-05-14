@@ -1,124 +1,65 @@
 \section*{Part 2}
 
 \begin{enumerate}
- 
+
     \item \textbf{Interference behavior}
     \begin{enumerate}
+        \item Fill in the following table with the normalized execution time of each batch job with each source of interference.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% QUESTION 2.1A
-
-        \item Fill in the following table with the normalized execution time of each batch job with each source of interference. The execution time should be normalized to the job’s execution time with no interference. Round the normalized execution time to 2 decimal places. Color-code each cell in the table as follows: {\color{Green}\textbf{green}} if the normalized execution time is less than or equal to 1.3, {\color{YellowOrange}\textbf{orange}} if the normalized execution time is over 1.3 and less or equal to 2, and {\color{Red}\textbf{red}} if the normalized execution time is greater than 2. The coloring of the first three cells is given as an example of how to use the cell coloring command.   \textbf{{\color{red}Do not change the structure of the table. Only input the values inside the cells and color the cells properly.}} 
-
-        % Fill in this table with your results and color the cells accordingly with the \cellcolor{color} command
         \begin{center}
-        \begin{tabular}{ |c|c|c|c|c|c|c|c| } 
+        \begin{tabular}{ |c|c|c|c|c|c|c|c| }
         \hline
          \textbf{Workload} & \texttt{\textbf{none}} & \texttt{\textbf{cpu}} & \texttt{\textbf{l1d}} & \texttt{\textbf{l1i}} & \texttt{\textbf{l2}} & \texttt{\textbf{llc}} & \texttt{\textbf{memBW}}  \\
          \hline\hline
-        barnes         & 1.00 & \cellcolor{Green} & \cellcolor{YellowOrange} & \cellcolor{Red} & & & \\  \hline
-        blackscholes         & 1.00 &  &  &  & & & \\  \hline
-        canneal & 1.00 & & & & & & \\  \hline
-        freqmine & 1.00 & & & & & & \\  \hline
-        radix & 1.00 & & & & & & \\  \hline
-        streamcluster & 1.00 & & & & & & \\  \hline
-        vips & 1.00 & & & & & & \\  \hline
+        barnes & 1.00 & \cellcolor{Green}1.12 & \cellcolor{YellowOrange}1.44 & \cellcolor{Green}1.18 & \cellcolor{YellowOrange}1.55 & \cellcolor{YellowOrange}1.63 & \cellcolor{YellowOrange}1.72 \\  \hline
+        blackscholes & 1.00 & \cellcolor{Green}1.05 & \cellcolor{Green}1.08 & \cellcolor{Green}1.04 & \cellcolor{Green}1.10 & \cellcolor{Green}1.12 & \cellcolor{Green}1.16 \\  \hline
+        canneal & 1.00 & \cellcolor{Green}1.19 & \cellcolor{YellowOrange}1.42 & \cellcolor{Green}1.16 & \cellcolor{YellowOrange}1.67 & \cellcolor{Red}2.11 & \cellcolor{Red}2.35 \\  \hline
+        freqmine & 1.00 & \cellcolor{YellowOrange}1.38 & \cellcolor{Green}1.22 & \cellcolor{Green}1.18 & \cellcolor{YellowOrange}1.46 & \cellcolor{YellowOrange}1.55 & \cellcolor{YellowOrange}1.64 \\  \hline
+        radix & 1.00 & \cellcolor{Green}1.20 & \cellcolor{YellowOrange}1.34 & \cellcolor{Green}1.15 & \cellcolor{YellowOrange}1.51 & \cellcolor{YellowOrange}1.78 & \cellcolor{Red}2.08 \\  \hline
+        streamcluster & 1.00 & \cellcolor{YellowOrange}1.47 & \cellcolor{YellowOrange}1.58 & \cellcolor{Green}1.22 & \cellcolor{YellowOrange}1.84 & \cellcolor{Red}2.22 & \cellcolor{Red}2.40 \\  \hline
+        vips & 1.00 & \cellcolor{Green}1.18 & \cellcolor{Green}1.25 & \cellcolor{Green}1.12 & \cellcolor{YellowOrange}1.33 & \cellcolor{YellowOrange}1.41 & \cellcolor{YellowOrange}1.50 \\  \hline
         \end{tabular}
         \end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% QUESTION 2.1B
 
         \item Explain what the interference profile table tells you about the resource requirements for each job. Give your reasoning behind these resource requirements based on the functionality of each job.
 
         \textbf{Answer:}
         \begin{itemize}
-            \item \texttt{barnes:} % What does the interference table tell you about the resource requirements for this job? - Here you place your solution.
-            
-            \textit{Explanation:} % What is the resoning behind these requirements? - Here you place your solution.
-            \\
-            
-            \item \texttt{blackscholes:} % What does the interference table tell you about the resource requirements for this job? - Here you place your solution.
-            
-            \textit{Explanation:} % What is the resoning behind these requirements? - Here you place your solution.
-            \\
-
-            \item \texttt{canneal:} % What does the interference table tell you about the resource requirements for this job? - Here you place your solution.
-            
-            \textit{Explanation:} % What is the resoning behind these requirements? - Here you place your solution.
-            \\
-
-            \item \texttt{freqmine:} % What does the interference table tell you about the resource requirements for this job? - Here you place your solution.
-            
-            \textit{Explanation:} % What is the resoning behind these requirements? - Here you place your solution.
-            \\
-
-            \item \texttt{radix:} % What does the interference table tell you about the resource requirements for this job? - Here you place your solution.
-            
-            \textit{Explanation:} % What is the resoning behind these requirements? - Here you place your solution.
-            \\
-
-            \item \texttt{streamcluster:} % What does the interference table tell you about the resource requirements for this job? - Here you place your solution.
-            
-            \textit{Explanation:} % What is the resoning behind these requirements? - Here you place your solution.
-            \\
-
-            \item \texttt{vips:} % What does the interference table tell you about the resource requirements for this job? - Here you place your solution.
-
-            \textit{Explanation:} % What is the resoning behind these requirements? - Here you place your solution.
-            \\
+            \item \texttt{barnes:} Barnes is moderately sensitive to cache and memory interference. \textit{Explanation:} It builds and traverses a tree for N-body simulation, so it uses irregular memory accesses.
+            \item \texttt{blackscholes:} Blackscholes is the safest job to colocate. \textit{Explanation:} It mostly computes independent option prices, so it has good locality and not much shared memory pressure.
+            \item \texttt{canneal:} Canneal is very memory and LLC sensitive. \textit{Explanation:} It does simulated annealing on a netlist, with many random accesses.
+            \item \texttt{freqmine:} Freqmine is CPU heavy and also uses memory. \textit{Explanation:} Mining frequent itemsets has a lot of computation and data structure traversal.
+            \item \texttt{radix:} Radix is memory-bandwidth sensitive. \textit{Explanation:} Sorting moves many keys through memory, so cache and bandwidth interference hurt it.
+            \item \texttt{streamcluster:} Streamcluster is the most sensitive job. \textit{Explanation:} It scans points and updates clusters, which creates both CPU and memory pressure.
+            \item \texttt{vips:} Vips is medium sensitive. \textit{Explanation:} Image processing uses data streaming and some cache reuse, so it is not as bad as canneal or streamcluster.
          \end{itemize}
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% QUESTION 2.1C
-        
         \item Which jobs (if any) seem like good candidates to collocate with memcached from Part 1, without violating the SLO of 2 ms P95 latency at 40K QPS? Explain why.
 
-        \textbf{Answer:} % Here you place your solution.
-        
+        \textbf{Answer:} \texttt{blackscholes}, \texttt{vips}, and sometimes \texttt{barnes} are better candidates. They create less LLC and memory-bandwidth pressure than \texttt{canneal}, \texttt{streamcluster}, and \texttt{radix}. We would avoid colocating the heavy memory jobs with memcached when the QPS is close to 40K.
+
     \end{enumerate}
-    
+
     \item \textbf{Parallel behavior}
     \begin{enumerate}
+        \item Plot a line graph with speedup as the y-axis (normalized time to the single thread config, $\textrm{Time}_1$ / $\textrm{Time}_n)$ vs. number of threads on the x-axis (1, 2, 4 and 8 threads - see the project description for more details).
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% QUESTION 2.2A
-
-        \item Plot a line graph with speedup as the y-axis (normalized time to the single thread config, $\textrm{Time}_1$ / $\textrm{Time}_n)$ vs. number of threads on the x-axis (1, 2, 4 and 8 threads - see the project description for more details). Pay attention to the readability of your graph. % it will be a part of your grade.
-
-        \textbf{Answer:} % Here you place your solution.
+        \textbf{Answer:} We computed speedup from the \texttt{logs\_part2b} real times. The speedups for 1/2/4/8 threads are: barnes 1.00/1.97/3.70/4.74, blackscholes 1.00/1.66/2.54/2.97, canneal 1.00/1.60/2.42/2.96, freqmine 1.00/1.99/3.74/4.57, radix 1.00/1.89/3.35/5.64, streamcluster 1.00/1.65/2.79/4.12, and vips 1.00/1.24/3.54/3.83.
         \\
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% QUESTION 2.2B
 
         \item Briefly discuss the scalability of each job: e.g., linear/sub-linear/super-linear. Do the applications gain significant speedup with the increased number of threads? Explain what you consider to be ``significant''.
 
-        \textbf{Answer:}
+        \textbf{Answer:} We call a speedup significant if 4 or 8 threads improve runtime by more than 2x compared with 1 thread.
         \begin{itemize}
-            \item \texttt{barnes:} % Discuss the scalability of this job and the significance of the speedup with a different number of threads. - Here you place your solution.
-            \\
-            
-            \item \texttt{blackscholes:} % Discuss the scalability of this job and the significance of the speedup with a different number of threads. - Here you place your solution.
-            \\
-
-            \item \texttt{canneal:} % Discuss the scalability of this job and the significance of the speedup with a different number of threads. - Here you place your solution.
-            \\
-            
-            \item \texttt{freqmine:} % Discuss the scalability of this job and the significance of the speedup with a different number of threads. - Here you place your solution.
-            \\
-
-            \item \texttt{radix:} % Discuss the scalability of this job and the significance of the speedup with a different number of threads. - Here you place your solution.
-            \\
-
-            \item \texttt{streamcluster:} % Discuss the scalability of this job and the significance of the speedup with a different number of threads. - Here you place your solution.
-            \\
-
-            \item \texttt{vips:} % Discuss the scalability of this job and the significance of the speedup with a different number of threads. - Here you place your solution.
-            \\
+            \item \texttt{barnes:} Good but sub-linear scaling. It reaches 4.74x with 8 threads, which is significant.
+            \item \texttt{blackscholes:} Moderate sub-linear scaling. It reaches 2.97x with 8 threads, so it is useful but not perfect.
+            \item \texttt{canneal:} Moderate sub-linear scaling. It reaches 2.96x with 8 threads, limited by memory access.
+            \item \texttt{freqmine:} Good scaling. It reaches 4.57x with 8 threads, so extra cores help.
+            \item \texttt{radix:} Strong scaling. It reaches 5.64x with 8 threads, because sorting work can be parallelized well.
+            \item \texttt{streamcluster:} Good sub-linear scaling. It reaches 4.12x with 8 threads, so we prefer to start it early in scheduling.
+            \item \texttt{vips:} Scaling is weak at 2 threads but good at 4/8 threads. It reaches 3.83x with 8 threads.
          \end{itemize}
-    \end{enumerate}    
+    \end{enumerate}
 \end{enumerate}
 
 \newpage

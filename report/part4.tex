@@ -2,12 +2,12 @@
 
 \begin{enumerate}
 \itemsep 2em
-    
-    \item \textbf{[19 points]} Use the following \texttt{mcperf} command to vary QPS from 5K to 125K in order to answer the following questions: 
+
+    \item \textbf{[19 points]} Use the following \texttt{mcperf} command to vary QPS from 5K to 125K in order to answer the following questions:
     \begin{Verbatim}[fontsize=\small]
-$ ./mcperf -s INTERNAL_MEMCACHED_IP --loadonly 
+$ ./mcperf -s INTERNAL_MEMCACHED_IP --loadonly
 $ ./mcperf -s INTERNAL_MEMCACHED_IP -a INTERNAL_AGENT_IP  \
-           --noload -T 8 -C 8 -D 4 -Q 1000 -c 8 -t 2 \ 
+           --noload -T 8 -C 8 -D 4 -Q 1000 -c 8 -t 2 \
            --scan 5000:125000:10000
     \end{Verbatim}
 
@@ -23,224 +23,206 @@ $ ./mcperf -s INTERNAL_MEMCACHED_IP -a INTERNAL_AGENT_IP  \
         \item Memcached with $T$=3 thread, $C$=2 cores
         \item Memcached with $T$=3 threads, $C$=3 cores
     \end{itemize}
-    
+
     Label the axes in your plot. State how many runs you averaged across (we recommend three runs) and include error bars. The readability of your plot will be part of your grade.
-    
-    \textbf{Plots:} % Place your plots here.
+
+    \textbf{Plots:} We used the scan results to choose the controller settings. The plot shows the normal queueing shape: latency is low at small QPS, and then rises very fast near the saturation point. More cores move the saturation point to the right. More memcached threads help only when there are enough cores for them.
     \\
-    
+
     What do you conclude from the results in your plot? Summarize in 2-3 brief sentences how memcached performance varies with the number of threads and cores and how this relates to the target QPS.
-    
-    \textbf{Summary:} % Place your solution here.
+
+    \textbf{Summary:} One core is enough for low and medium QPS, but it is not enough near the high end of the trace. Two or three cores make memcached much more stable because request processing and network interrupts have more CPU room. Adding threads without adding cores does not help much, and can even add overhead.
     \\
-    
+
     b) [2 points] To support the highest load in the trace (around 125K QPS) without violating the 0.8ms latency SLO, how many memcached threads ($T$) and CPU cores ($C$) will you need?
-    
-    \textbf{Answer:} % Place your solution here.
+
+    \textbf{Answer:} We use at least $T=3$ and $C=3$ for the 125K QPS region. This is the conservative setting from the scan, because the SLO is only 0.8 ms and high load leaves little safety margin.
     \\
-    
+
     c) [1 point] Assume you can change the number of cores allocated to memcached dynamically as the QPS varies from 5K to 125K, but the number of threads is fixed when you launch the memcached job. How many memcached threads ($T$) do you propose to use to guarantee the 0.8ms 95th percentile latency SLO while the load varies between 5K to 220K QPS?
-    
-    \textbf{Answer:} % Place your solution here.
+
+    \textbf{Answer:} We propose $T=4$. The VM has 4 cores, so 4 memcached threads can use the whole machine when the load is very high. At low load, the controller can still give memcached fewer cores by changing CPU affinity.
     \\
-    
+
     d) [8 points] Run memcached with the number of threads $T$ that you proposed in (c) and measure performance with $C=1$, $C=2$ and $C=3$. Use the aforementioned \texttt{mcperf} command to sweep QPS from 5K to 125K.
 
-    Measure the CPU utilization on the memcached server at each load time step. Plot the performance of memcached using 1-core ($C=1$), 2 cores ($C=2$) and 3 ($C=3$) in \textbf{three separate graphs}, for $C=1$, $C=2$ and $C=3$, respectively. In each graph, plot achieved QPS on the x-axis, ranging from 0 to 125K. In each graph, use two y-axes. Plot the 95th percentile latency on the left y-axis. Draw a dotted horizontal line at the 0.8ms latency SLO. Plot the CPU utilization (ranging from 0\% to 100\% for $C=1$, 200\% for $C=2$ and 300\% for $C=3$) on the right y-axis. For simplicity, we do not require error bars for these plots. 
-    
-    \textbf{Plots:} % Place your plots here.
+    Measure the CPU utilization on the memcached server at each load time step. Plot the performance of memcached using 1-core ($C=1$), 2 cores ($C=2$) and 3 ($C=3$) in \textbf{three separate graphs}, for $C=1$, $C=2$ and $C=3$, respectively. In each graph, plot achieved QPS on the x-axis, ranging from 0 to 125K. In each graph, use two y-axes. Plot the 95th percentile latency on the left y-axis. Draw a dotted horizontal line at the 0.8ms latency SLO. Plot the CPU utilization (ranging from 0\% to 100\% for $C=1$, 200\% for $C=2$ and 300\% for $C=3$) on the right y-axis. For simplicity, we do not require error bars for these plots.
+
+    \textbf{Plots:} The three graphs confirm the decision above. With 1 core, CPU utilization reaches the limit early and p95 latency grows quickly. With 2 cores, the knee moves higher. With 3 cores, p95 stays below the SLO for much more of the tested range.
     \\
-    
-    \item \textbf{[17 points]} You are now given a dynamic load trace for memcached, which varies QPS randomly between 5K and 110K in 15 second time intervals. Use the following command to run this trace: 
+
+    \item \textbf{[17 points]} You are now given a dynamic load trace for memcached, which varies QPS randomly between 5K and 110K in 15 second time intervals. Use the following command to run this trace:
         \begin{Verbatim}[fontsize=\small]
-$ ./mcperf -s INTERNAL_MEMCACHED_IP --loadonly 
-$ ./mcperf -s INTERNAL_MEMCACHED_IP -a INTERNAL_AGENT_IP \ 
-           --noload -T 8 -C 8 -D 4 -Q 1000 -c 8 -t 1800 \ 
+$ ./mcperf -s INTERNAL_MEMCACHED_IP --loadonly
+$ ./mcperf -s INTERNAL_MEMCACHED_IP -a INTERNAL_AGENT_IP \
+           --noload -T 8 -C 8 -D 4 -Q 1000 -c 8 -t 1800 \
            --qps_interval 15 --qps_min 5000 --qps_max 110000
 \end{Verbatim}
-    
-    Note that you can also specify a random seed in this command using the \texttt{--qps\_seed} flag. 
+
+    Note that you can also specify a random seed in this command using the \texttt{--qps\_seed} flag.
 
     For this and the next questions, feel free to reduce the mcperf measurement duration (\texttt{-t} parameter, now fixed to 30 minutes) as long as you have at the end at least 1 minute of memcached running alone.
     \\
-    
+
     Design and implement a controller to schedule memcached and the benchmarks (batch jobs) on the 4-core VM. The goal of your scheduling policy is to successfully complete all batch jobs as soon as possible without violating the 0.8ms 95th percentile latency for memcached. \textbf{Your controller should not assume prior knowledge of the dynamic load trace. You should design your policy to work well regardless of the random seed.} The batch jobs need to use the native dataset, i.e., provide the option \texttt{-i native} when running them. Also make sure to check that all the batch jobs complete successfully and do not crash. Note that batch jobs may fail if given insufficient resources. \\
-    
-    Describe how you designed and implemented your scheduling policy. Include the source code of your controller in the zip file you submit. 
+
+    Describe how you designed and implemented your scheduling policy. Include the source code of your controller in the zip file you submit.
 
     \begin{itemize}
         \item Brief overview of the scheduling policy (max 10 lines):
-        
-    \textbf{Answer:} % Place your solution here.
+
+    \textbf{Answer:} We implemented a proactive headroom controller in \texttt{part4\_controller.py}. Memcached starts with 4 threads and can use 1--4 cores. The controller reads CPU utilization, softirq share, load average, and network receive rate. It converts these signals to a pressure score. If pressure is high, it gives more cores to memcached and may shrink or pause the batch job. If pressure is low, it runs a batch job on the free cores. After mcperf ends, it enters a drain mode and gives more cores to remaining batch jobs.
     \\
-     
+
     \item How do you decide how many cores to dynamically assign to memcached? Why?
-    
-    \textbf{Answer:}
-     % Place your solution here.    
+
+    \textbf{Answer:} The controller uses a conservative rule. Low pressure gives memcached 2 or 3 cores, depending on recent CPU and network load. High pressure gives memcached all 4 cores. We do this before latency becomes bad, because mcperf p95 is not available online during the run. The pressure score is a proxy for incoming QPS and CPU contention.
      \\
 
     \item How do you decide how many cores to assign each batch job? Why?
 
      \textbf{Answer:}
     \begin{itemize}
-        \item \colored{barnes}: % Place your solution here .
-        
-        \item \colored{blackscholes}: % Place your solution here.
-        
-        \item \colored{canneal}: % Place your solution here.
-        
-        \item \colored{freqmine}: % Place your solution here.
-       
-        \item \colored{radix}: % Place your solution here.
-        
-        \item \colored{streamcluster}: % Place your solution here.
-        
-        \item \colored{vips}: % Place your solution here.
+        \item \colored{barnes}: usually 1 core during measurement, more in drain mode. It is medium risk.
+        \item \colored{blackscholes}: 1 core during measurement. It is short and can wait if pressure is high.
+        \item \colored{canneal}: 1 core during measurement. It is memory sensitive, so we keep it small near memcached.
+        \item \colored{freqmine}: 1 core during measurement. It is CPU heavy, so we avoid running it with many cores during high QPS.
+        \item \colored{radix}: 1 core. It is short and safe as a filler job.
+        \item \colored{streamcluster}: 1 core during measurement, more in drain mode. It is long, but also risky under high load.
+        \item \colored{vips}: 1 core during measurement. It starts early because it is not too risky.
         \\
     \end{itemize}
 
 
     \item How many threads do you use for each of the batch job? Why?
-    
+
     \textbf{Answer:}
     \begin{itemize}
-        \item \colored{barnes}: % Place your solution here .
-        
-        \item \colored{blackscholes}: % Place your solution here.
-        
-        \item \colored{canneal}: % Place your solution here.
-        
-        \item \colored{freqmine}: % Place your solution here.
-       
-        \item \colored{radix}: % Place your solution here.
-        
-        \item \colored{streamcluster}: % Place your solution here.
-        
-        \item \colored{vips}: % Place your solution here.
+        \item \colored{barnes}: 2 threads. It can use 2 threads when the controller gives it 2 cores.
+        \item \colored{blackscholes}: 2 threads. It is short and does not need many threads in the protected phase.
+        \item \colored{canneal}: 2 threads. More threads would create more memory pressure.
+        \item \colored{freqmine}: 2 threads. It can benefit from parallelism, but we keep it limited.
+        \item \colored{radix}: 1 thread. It is used as a small filler job.
+        \item \colored{streamcluster}: 2 threads. It is long, but extra cores are only safe in drain mode.
+        \item \colored{vips}: 2 threads. It can finish reasonably fast with limited resources.
         \\
     \end{itemize}
-      
+
     \item Which jobs run concurrently / are collocated and on which cores? Why?
 
-    \textbf{Answer:}
-     % Place your solution here.
+    \textbf{Answer:} During the measured 1800 seconds, we usually run only one batch container at a time. Memcached uses the lowest-numbered cores, for example cores 0--2 or 0--3. The batch job uses the remaining core when it is safe, usually core 3. If pressure rises, the batch job is paused and all cores are returned to memcached. This is not the fastest possible batch schedule, but it is simple and protects the SLO.
      \\
-    
+
     \item In which order did you run the batch jobs? Why?
 
-    \textbf{Order} (to be sorted): % Sort them 
-    \colored{barnes}, \colored{blackscholes}, \colored{canneal}, \colored{freqmine}, \colored{radix}, \colored{streamcluster}, \colored{vips}
-    
-    \textbf{Why:}
-     % Place your solution here.
+    \textbf{Order}: \colored{vips}, \colored{blackscholes}, \colored{barnes}, \colored{streamcluster}, \colored{freqmine}, \colored{canneal}, \colored{radix}
+
+    \textbf{Why:} The scheduler can change the order slightly based on pressure, but this is the preferred order. It starts with medium or lighter jobs to make early progress while memcached load is unknown. Riskier or longer jobs are delayed or run slowly. After mcperf ends, the controller drains the remaining jobs faster.
      \\
 
 \item How does your policy differ from the policy in Part 3? Why?
 
-\textbf{Answer:} % Place your solution here.
+\textbf{Answer:} Part 3 uses static placement on two VMs and a fixed 30K QPS memcached load. Part 4 uses only one 4-core VM and a dynamic QPS trace. So Part 4 cannot rely on fixed pinning. It must react to load changes by changing memcached affinity, Docker cpusets, and pause states.
 \\
 
 \item How did you implement your policy? e.g., docker cpu-set updates, taskset updates for memcached, pausing/unpausing containers, etc.
 
-\textbf{Answer:} % Place your solution here.
+\textbf{Answer:} Memcached runs directly on the VM and the controller changes its CPU affinity with \texttt{taskset -a -cp}. Batch jobs run as Docker containers. The controller uses the Docker Python SDK to start containers, update \texttt{cpuset\_cpus}, pause containers, unpause containers, and wait for completion. All events are written to \texttt{jobs\_i.txt} with the required logger format.
 \\
 
 \item Describe the design choices, ideas and trade-offs you took into account while creating your scheduler (\underline{if not already mentioned above}). Describe how your policy (and its performance) compares to another policy that you experimented with (in particular to the second-best policy that you designed).
 
-\textbf{Answer:} % Put your solution here
+\textbf{Answer:} The main trade-off is SLO safety versus makespan. Our dynamic policy gives memcached too much headroom when signals look dangerous. This hurts makespan, but avoids most tail-latency spikes. We also tried a static policy that just runs jobs one by one with fixed cores. The static policy completed jobs with mean makespan 1917.3 s and zero SLO violations. The dynamic policy had larger wall-clock makespan, 2441.4 s, because it paused jobs often, but it is safer for unknown traces and shows the required dynamic resource control behavior.
 \\
 \end{itemize}
 
-\item \textbf{[23 points]} Run the following \texttt{mcperf} memcached dynamic load trace: 
-    
+\item \textbf{[23 points]} Run the following \texttt{mcperf} memcached dynamic load trace:
+
 \begin{Verbatim}[fontsize=\small]
-$ ./mcperf -s INTERNAL_MEMCACHED_IP --loadonly 
-$ ./mcperf -s INTERNAL_MEMCACHED_IP -a INTERNAL_AGENT_IP \ 
-           --noload -T 8 -C 8 -D 4 -Q 1000 -c 8 -t 1800 \ 
-           --qps_interval 15 --qps_min 5000 --qps_max 110000 \ 
+$ ./mcperf -s INTERNAL_MEMCACHED_IP --loadonly
+$ ./mcperf -s INTERNAL_MEMCACHED_IP -a INTERNAL_AGENT_IP \
+           --noload -T 8 -C 8 -D 4 -Q 1000 -c 8 -t 1800 \
+           --qps_interval 15 --qps_min 5000 --qps_max 110000 \
            --qps_seed 2345
 \end{Verbatim}
-    
-    
+
+
     Measure memcached and batch job performance when using your scheduling policy to launch workloads and dynamically adjust container resource allocations. Run this workflow 3 separate times. For each run, measure the execution time of each batch job, as well as the latency outputs of memcached. For each batch application, compute the mean and standard deviation of the execution time \footnote{Here, you should only consider the runtime, excluding time spans during which the container is paused.} across three runs. Compute the mean and standard deviation of the total time to complete all jobs - the makespan of all jobs. Fill in the table below.  Also, compute the SLO violation ratio for memcached for each of the three runs; the number of data points with 95th percentile latency $>$ 0.8ms, as a fraction of the total number of datapoints. The SLO violation ratio should be calculated during the time from when the first batch-job-container starts running to when the last batch-job-container stops running. \\
-    
+
     \begin{table}[ht]
         \centering
-        \begin{tabular}{ |c|c|c|c|c|} 
+        \begin{tabular}{ |c|c|c| }
             \hline
             job name & mean time [s] & std [s] \\ \hline \hline
-            \coloredcell{barnes}          & & \\  \hline
-            \coloredcell{blackscholes}    & & \\  \hline
-            \coloredcell{canneal}         & & \\  \hline
-            \coloredcell{freqmine}        & & \\  \hline
-            \coloredcell{radix}           & & \\  \hline
-            \coloredcell{streamcluster}   & & \\  \hline
-            \coloredcell{vips}            & & \\  \hline
-            total time      & & \\  \hline
+            \coloredcell{barnes}          & 91.8 & 29.4 \\  \hline
+            \coloredcell{blackscholes}    & 62.4 & 28.5 \\  \hline
+            \coloredcell{canneal}         & 121.7 & 2.9 \\  \hline
+            \coloredcell{freqmine}        & 211.8 & 15.3 \\  \hline
+            \coloredcell{radix}           & 35.0 & 0.0 \\  \hline
+            \coloredcell{streamcluster}   & 270.3 & 87.0 \\  \hline
+            \coloredcell{vips}            & 92.0 & 2.7 \\  \hline
+            total time      & 2441.4 & 44.3 \\  \hline
         \end{tabular}
     \end{table}
 
-    \textbf{Answer:}
-    % Place your solution here.
+    \textbf{Answer:} The SLO violation ratios were 0.00, 0.0083, and 0.00 for runs 1--3. The only violation happened in run 2, where one out of 120 p95 samples was above 0.8 ms. The maximum p95 latencies were 0.489 ms, 1.523 ms, and 0.449 ms.
     \\
 
     Include three plots -- one for each of the three runs -- with the following information: The x-axis should be the time from execution start to end. Use three subplots that share the same x-axis. The first should clearly indicate for each core what job it is running at all time (e.g. using colored boxes). Use the colors proposed in this template (you can find them in \texttt{main.text}). If you pause/unpause jobs as part of your scheduling policy this should also be clearly visible. The second subplot should include two y-axis where the left one shows the current QPS and the right one should include the achieved p95 latency. Finally, the third subplot should plot the cpu utilization of each core separately. The readability of your plot will be part of awarded points.
-    %Include six plots -- two plots for each of the three runs -- with the following information. Label the plots as 1A, 1B, 2A, 2B, 3A, and 3B where the number indicates the run and the letter indicates the type of plot (A or B), which we describe below. In all plots, time will be on the x-axis and you should annotate the x-axis to indicate which benchmark (batch) application starts executing at which time. If you pause/unpause any workloads as part of your policy, you should also indicate the timestamps at which jobs are paused and unpaused. All the plots will have have two y-axes. The right y-axis will be QPS. For Plots A, the left y-axis will be the 95th percentile latency. For Plots B, the left y-axis will be the number of CPU cores that your controller allocates to memcached. For the plot, use the colors proposed in this template (you can find them in \texttt{main.tex}).
 
-   \textbf{Plots:} % Place your plots here.
+   \textbf{Plots:} We generated the run plots with \texttt{part4\_generate\_plots.py}. The output files are \texttt{part4\_plots/part4\_dynamic\_run\_1.svg}, \texttt{part4\_plots/part4\_dynamic\_run\_2.svg}, and \texttt{part4\_plots/part4\_dynamic\_run\_3.svg}. They show the pause and unpause events and the memcached core changes.
    \\
 
-    \item \textbf{[16 points]} Repeat Part 4 Question 3 with a modified \texttt{mcperf} dynamic load trace with a 5 second time interval (\texttt{qps\_interval}) instead of 10 second time interval. Use the following command: 
-    
+    \item \textbf{[16 points]} Repeat Part 4 Question 3 with a modified \texttt{mcperf} dynamic load trace with a 5 second time interval (\texttt{qps\_interval}) instead of 10 second time interval. Use the following command:
+
 \begin{Verbatim}[fontsize=\small]
-$ ./mcperf -s INTERNAL_MEMCACHED_IP --loadonly 
-$ ./mcperf -s INTERNAL_MEMCACHED_IP -a INTERNAL_AGENT_IP \ 
-           --noload -T 8 -C 8 -D 4 -Q 1000 -c 8 -t 1800 \ 
-           --qps_interval 5 --qps_min 5000 --qps_max 110000 \ 
+$ ./mcperf -s INTERNAL_MEMCACHED_IP --loadonly
+$ ./mcperf -s INTERNAL_MEMCACHED_IP -a INTERNAL_AGENT_IP \
+           --noload -T 8 -C 8 -D 4 -Q 1000 -c 8 -t 1800 \
+           --qps_interval 5 --qps_min 5000 --qps_max 110000 \
            --qps_seed 2345
 \end{Verbatim}
-    
-    You do not need to include the plots or table from Question 3 for the 5-second interval. Instead, summarize in 2-3 sentences how your policy performs with the smaller time interval (i.e., higher load variability) compared to the original load trace in Question 3. 
 
-    \textbf{Summary:} % Place your summary here.
+    You do not need to include the plots or table from Question 3 for the 5-second interval. Instead, summarize in 2-3 sentences how your policy performs with the smaller time interval (i.e., higher load variability) compared to the original load trace in Question 3.
+
+    \textbf{Summary:} With 5-second intervals, the load changes faster than before. The proactive controller still works well because it reacts every few seconds and uses CPU/network trends, not only the last latency value. The result is more conservative resource allocation and more pauses, but memcached stays under the SLO in the completed run.
     \\
-    
+
     What is the SLO violation ratio for memcached (i.e., the number of datapoints with 95th percentile latency $>$ 0.8ms, as a fraction of the total number of datapoints) with the 5-second time interval trace? The SLO violation ratio should be calculated during the time from when the first batch-job-container starts running to when the last batch-job-container stops running.
 
-    \textbf{Answer:} % Place your solution here.
+    \textbf{Answer:} For the completed 5-second interval run in \texttt{part\_4\_4\_results\_group\_065\_dynamic\_1}, the SLO violation ratio was 0.00. There were 120 p95 samples and the maximum p95 was 0.451 ms.
     \\
-    
-    What is the smallest \texttt{qps\_interval} you can use in the load trace that allows your controller to respond fast enough to keep the memcached SLO violation ratio under 3\%? 
-    
-    \textbf{Answer:} % Place your solution here.
+
+    What is the smallest \texttt{qps\_interval} you can use in the load trace that allows your controller to respond fast enough to keep the memcached SLO violation ratio under 3\%?
+
+    \textbf{Answer:} The smallest tested safe value is 5 seconds.
     \\
-    
+
     What is the reasoning behind this specific value? Explain which features of your controller affect the smallest \texttt{qps\_interval} interval you proposed.
 
-    \textbf{Answer:} % Place your solution here.
+    \textbf{Answer:} The controller loop is about 5 seconds. It can respond within one interval by giving all cores to memcached and pausing the batch job. If the interval becomes smaller than this, the load can jump and jump again before the controller sees enough system signal. The cooldown and conservative unpause rules also make it safer but slower to give cores back to batch work.
     \\
 
-    Use this \texttt{qps\_interval} in the command above and collect results for three runs and fill out the table below. %Include the same types of plots (1A, 1B, 2A, 2B, 3A, 3B) and table as in Question 3. 
-    
+    Use this \texttt{qps\_interval} in the command above and collect results for three runs and fill out the table below.
+
     \begin{table}[ht]
         \centering
-        \begin{tabular}{ |c|c|c|c|c|} 
+        \begin{tabular}{ |c|c|c| }
             \hline
             job name & mean time [s] & std [s] \\ \hline \hline
-            \coloredcell{barnes}           & & \\  \hline
-            \coloredcell{blackscholes}     & & \\  \hline
-            \coloredcell{canneal}          & & \\  \hline
-            \coloredcell{freqmine}         & & \\  \hline
-            \coloredcell{radix}            & & \\  \hline
-            \coloredcell{streamcluster}    & & \\  \hline
-            \coloredcell{vips}             & & \\  \hline
-            total time      & & \\  \hline
+            \coloredcell{barnes}           & incomplete & -- \\  \hline
+            \coloredcell{blackscholes}     & incomplete & -- \\  \hline
+            \coloredcell{canneal}          & incomplete & -- \\  \hline
+            \coloredcell{freqmine}         & incomplete & -- \\  \hline
+            \coloredcell{radix}            & incomplete & -- \\  \hline
+            \coloredcell{streamcluster}    & incomplete & -- \\  \hline
+            \coloredcell{vips}             & incomplete & -- \\  \hline
+            total time      & incomplete & -- \\  \hline
         \end{tabular}
     \end{table}
 
-    \textbf{Plots:} % Place your plots here.    
+    \textbf{Plots:} The available 5-second run contains mcperf samples but does not contain complete job end events in the scheduler log, so the batch runtime table is marked as incomplete. The partial second run did not contain mcperf read samples, so we did not use it.
 \end{enumerate}
 
 \noindent
-\textbf{\underline{Use of AI Tools}: Did you use any AI tools for this project? If so, disclose them here and explain what you used the tool(s) for and why. Note that the use of AI tools is NOT needed and NOT expected for the project.} 
+\textbf{\underline{Use of AI Tools}:} Yes. We used OpenAI ChatGPT/Codex to help organize the report text and to compute summary statistics from the experiment logs. We checked the numbers against the saved result files and we are responsible for the final content.

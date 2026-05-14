@@ -1,145 +1,131 @@
 \section*{Part 3 [68 points]}
 
 \begin{enumerate}
-    \item \textbf{[34 points]} Describe and analyze your hand-crafted policy. 
+    \item \textbf{[34 points]} Describe and analyze your hand-crafted policy.
     \begin{enumerate}
     \item \textbf{[17 points]} With your scheduling policy, run the entire workflow \textbf{\textcolor{red}{3 separate times}}. For each run, measure the execution time of each batch job, as well as the latency outputs of memcached, running with a steady client load of 30K QPS. For each batch application, compute the mean and standard deviation of the execution time \footnote{Here, you should only consider the runtime, excluding time spans during which the container is paused.} across three runs. Also, compute the mean and standard deviation of the total time to complete all jobs - the makespan of all jobs. Fill in the table below. Finally, compute the SLO violation ratio for memcached for the three runs; the number of data points with 95th percentile latency $>$ 1ms, as a fraction of the total number of data points. The SLO violation ratio should be calculated during the time from when the first batch-job-container starts running to when the last batch-job-container stops running.  \\
 
     \begin{table}[ht]
         \centering
-        \begin{tabular}{ |c|c|c|c|c|} 
+        \begin{tabular}{ |c|c|c| }
             \hline
             job name & mean time [s] & std [s] \\ \hline \hline
-            \coloredcell{barnes}          & & \\  \hline
-            \coloredcell{blackscholes}    & & \\  \hline
-            \coloredcell{canneal}         & & \\  \hline
-            \coloredcell{freqmine}        & & \\  \hline
-            \coloredcell{radix}           & & \\  \hline
-            \coloredcell{streamcluster}   & & \\  \hline
-            \coloredcell{vips}            & & \\  \hline
-            total time      & & \\  \hline
+            \coloredcell{barnes}          & 63.3 & 1.5 \\  \hline
+            \coloredcell{blackscholes}    & 40.0 & 1.0 \\  \hline
+            \coloredcell{canneal}         & 196.7 & 3.2 \\  \hline
+            \coloredcell{freqmine}        & 130.7 & 0.6 \\  \hline
+            \coloredcell{radix}           & 66.7 & 1.5 \\  \hline
+            \coloredcell{streamcluster}   & 242.7 & 0.6 \\  \hline
+            \coloredcell{vips}            & 54.3 & 0.6 \\  \hline
+            total time      & 294.0 & 13.9 \\  \hline
         \end{tabular}
     \end{table}
 
-    \textbf{Answer:} % Place your solution here.
+    \textbf{Answer:} We ran the hand-made scheduler three times. The makespans were 310 s, 286 s, and 286 s. The memcached SLO violation ratio was 0.00 in all three runs, because no p95 sample was above 1 ms. The maximum p95 latencies were 0.466 ms, 0.484 ms, and 0.454 ms, so the policy was safe for memcached.
     \\
-    
-    Create 3 bar plots (one for each run) of memcached p95 latency (y-axis) over time (x-axis), with annotations showing when each batch job started and ended, also indicating the machine each of them is running on. Using the augmented version of mcperf, you get two additional columns in the output: \texttt{ts\_start} and \texttt{ts\_end}. Use them to determine the width of each bar in the bar plot, while the height should represent the p95 latency. Align the $x$ axis so that $x=0$ coincides with the starting time of the first container. 
-    For each core in each machine show what job it is running using the colors proposed in this template (you can find them in \texttt{main.tex}). For example, draw a bar in {\color{vips}the color of vips} for core x from when vips is started to when it ends if vips ran on core x.
-    %Use  the colors proposed in this template (you can find them in \texttt{main.tex}). For example, use the \colored{vips} color to annotate when vips started and stopped, the \colored{blackscholes} color to annotate when blackscholes started and stopped etc.
 
-    \textbf{Plots:} % Place your plots here.
+    Create 3 bar plots (one for each run) of memcached p95 latency (y-axis) over time (x-axis), with annotations showing when each batch job started and ended, also indicating the machine each of them is running on. Using the augmented version of mcperf, you get two additional columns in the output: \texttt{ts\_start} and \texttt{ts\_end}. Use them to determine the width of each bar in the bar plot, while the height should represent the p95 latency. Align the $x$ axis so that $x=0$ coincides with the starting time of the first container.
+    For each core in each machine show what job it is running using the colors proposed in this template (you can find them in \texttt{main.tex}). For example, draw a bar in {\color{vips}the color of vips} for core x from when vips is started to when it ends if vips ran on core x.
+
+    \textbf{Plots:} The plots are produced from \texttt{part\_3\_1\_results\_group\_065/mcperf\_i.txt} and \texttt{pods\_i.json}. In the plots, all latency bars stay below the 1 ms SLO line. The job colors follow the color definitions in \texttt{main.tex}.
     \\
-        
-    \item \textbf{[17 points]} Describe and justify the “optimal” scheduling policy you have designed. 
-    
+
+    \item \textbf{[17 points]} Describe and justify the “optimal” scheduling policy you have designed.
+
     \begin{itemize}
         \item Which node does memcached run on? Why?
 
-        \textbf{Answer:} % Place your solution here.
+        \textbf{Answer:} Memcached runs on \texttt{node-a-8core}. We pin it to core 0 and use one memcached worker thread. This gives memcached a private physical core, so the batch jobs do not fight with it on the same core. This is a simple and safe choice because the SLO is more important than a little extra batch parallelism.
         \\
 
         \item Which node does each of the 7 batch jobs run on? Why?
 
         \textbf{Answer:}
         \begin{itemize}
-            \item \colored{barnes}: % Place your solution here .
-            
-            \item \colored{blackscholes}: % Place your solution here.
-            
-            \item \colored{canneal}: % Place your solution here.
-            
-            \item \colored{freqmine}: % Place your solution here.
-            
-            \item \colored{radix}: % Place your solution here.
-            
-            \item \colored{streamcluster}: % Place your solution here.
-            
-            \item \colored{vips}: % Place your solution here.
+            \item \colored{barnes}: \texttt{node-a-8core}, cores 5--7. It is not the longest job, so it starts after earlier jobs finish.
+            \item \colored{blackscholes}: \texttt{node-b-4core}, cores 0--3. It is short and gets the node after \texttt{vips}.
+            \item \colored{canneal}: \texttt{node-a-8core}, cores 5--6. It is longer, so we start it early with two cores.
+            \item \colored{freqmine}: \texttt{node-b-4core}, cores 0--3. It is long and scales well, so it starts at the beginning on the 4-core node.
+            \item \colored{radix}: \texttt{node-a-8core}, core 7. It fills the spare core and finishes quickly.
+            \item \colored{streamcluster}: \texttt{node-a-8core}, cores 1--4. It is the longest job, so it starts first with four cores.
+            \item \colored{vips}: \texttt{node-b-4core}, cores 0--3. It runs after \texttt{freqmine}; it is not too long and benefits from more cores.
             \\
-            
         \end{itemize}
 
         \item Which jobs run concurrently / are colocated? Why?
 
-        \textbf{Answer:} % Place your solution here.
+        \textbf{Answer:} At the start, \texttt{streamcluster}, \texttt{canneal}, \texttt{radix}, \texttt{freqmine}, and memcached run at the same time. Memcached has only core 0 on \texttt{node-a}. The batch jobs use other cores or \texttt{node-b}. This keeps the long jobs moving early, but avoids direct core sharing with memcached.
         \\
 
         \item In which order did you run the 7 batch jobs? Why?
-    
-        \textbf{Order (to be sorted)}: % Sort them 
-        \colored{barnes}, \colored{blackscholes}, \colored{canneal}, \colored{freqmine}, \colored{radix}, \colored{streamcluster}, \colored{vips}
-    
-    
-        \textbf{Why}: % Place your solution here.
+
+        \textbf{Order}: \colored{streamcluster}, \colored{freqmine}, \colored{canneal}, \colored{radix}, \colored{vips}, \colored{barnes}, \colored{blackscholes}
+
+        \textbf{Why}: We start the long jobs first because they decide the final makespan. \texttt{radix} is short and can use one leftover core. After \texttt{freqmine} finishes, \texttt{vips} and then \texttt{blackscholes} use \texttt{node-b}. After \texttt{canneal} and \texttt{radix} finish, \texttt{barnes} uses the free cores on \texttt{node-a}.
         \\
 
         \item How many threads have you used for each of the 7 batch jobs? Why?
-    
+
         \textbf{Answer:}
-    
+
         \begin{itemize}
-            \item \colored{barnes}: % Place your solution here. 
-            
-            \item \colored{blackscholes}: % Place your solution here.
-            
-            \item \colored{canneal}: % Place your solution here.
-            
-            \item \colored{freqmine}: % Place your solution here.
-            
-            \item \colored{radix}: % Place your solution here.
-           
-            \item \colored{streamcluster}: % Place your solution here.
-            
-            \item \colored{vips}: % Place your solution here.
+            \item \colored{barnes}: 3 threads, because it runs on 3 pinned cores.
+            \item \colored{blackscholes}: 4 threads, because it runs alone on the 4-core node.
+            \item \colored{canneal}: 2 threads, because it receives 2 cores and has moderate scaling.
+            \item \colored{freqmine}: 4 threads, because it scales well and is long.
+            \item \colored{radix}: 1 thread, because it only fills one free core.
+            \item \colored{streamcluster}: 4 threads, because it is long and benefits from early parallel execution.
+            \item \colored{vips}: 4 threads, because it runs alone on \texttt{node-b} after \texttt{freqmine}.
             \\
         \end{itemize}
 
         \item Which files did you modify or add and in what way? Which Kubernetes features did you use?
-    
-        \textbf{Answer:} % Place your solution here.
+
+        \textbf{Answer:} We used \texttt{run\_part3a.sh} and \texttt{part3\_runner.py} to create the jobs in the selected order. The Kubernetes YAML files set node placement, CPU requests, and commands. We used node selectors / node names for placement, CPU requests for resource accounting, and explicit CPU pinning in the container command so the jobs run on the cores that the policy expects.
         \\
-    
+
         \item Describe the design choices, ideas and trade-offs you took into account while creating your scheduler (\underline{if not already mentioned above}). Describe how your policy (and its performance) compares to another policy that you experimented with (in particular to the second-best policy that you designed).
 
-        \textbf{Answer:} % Place your solution here
+        \textbf{Answer:} The main trade-off is safety versus makespan. We chose to keep one private core for memcached and not use all cores for batch work. This can make batch jobs a little slower, but it keeps p95 latency very low. We also tried a more aggressive placement where batch jobs used more cores on \texttt{node-a}. It was slightly faster in some runs, but it had more risk because memcached and batch work were closer. The final hand-made policy is conservative and repeatable.
         \\
-    
+
     \end{itemize}
     \end{enumerate}
-    \item \textbf{[34 points]} Describe and analyze the AI-generated policy. [TODO: Xiaozhe]
+    \item \textbf{[34 points]} Describe and analyze the AI-generated policy.
 
     \begin{enumerate}
         \item \textbf{[17 points]} \textbf{Report the performance}:
-        
+
         \begin{itemize}
             \item Report the mean time of each batch job, as well as the makespan of all jobs for the AI-generated policy. Also, report the SLO violation ratio for memcached for the AI-generated policy. \textit{Note: If the LLM failed to produce a valid solution after 3+ attempts, provide the error logs and your best-performing manual tweak for partial credit.}
-        
+
         \begin{table}[ht]
             \centering
-            \begin{tabular}{ |c|c|c|c|c|} 
+            \begin{tabular}{ |c|c|c| }
                 \hline
                 job name & mean time [s] (Baseline) & mean time [s] (AI) \\ \hline \hline
-                \coloredcell{barnes}          & & \\  \hline
-                \coloredcell{blackscholes}    & & \\  \hline
-                \coloredcell{canneal}         & & \\  \hline
-                \coloredcell{freqmine}        & & \\  \hline
-                \coloredcell{radix}           & & \\  \hline
-                \coloredcell{streamcluster}   & & \\  \hline
-                \coloredcell{vips}            & & \\  \hline
-                total time      & & \\  \hline
+                \coloredcell{barnes}          & 63.3 & 43.3 \\  \hline
+                \coloredcell{blackscholes}    & 40.0 & 44.7 \\  \hline
+                \coloredcell{canneal}         & 196.7 & 185.3 \\  \hline
+                \coloredcell{freqmine}        & 130.7 & 132.3 \\  \hline
+                \coloredcell{radix}           & 66.7 & 39.3 \\  \hline
+                \coloredcell{streamcluster}   & 242.7 & 159.3 \\  \hline
+                \coloredcell{vips}            & 54.3 & 79.7 \\  \hline
+                total time      & 294.0 & 300.0 \\  \hline
             \end{tabular}
         \end{table}
 
+        The AI policy makespans were 293 s, 308 s, and 299 s. The mean makespan is 300.0 s with standard deviation 7.5 s. The SLO violation ratio was 0.00 in all three runs. The maximum p95 latencies were 0.427 ms, 0.417 ms, and 0.592 ms.
+
     \item Create 3 bar plots (one for each run), for the final AI-generated policy, of memcached p95 latency (y-axis) over time (x-axis), with annotations showing when each batch job started and ended, also indicating the machine each of them is running on. Use the same method as described in the previous question to create the bar plots.
-    
-    \textbf{Answer:}
+
+    \textbf{Answer:} The three AI-policy plots are generated from \texttt{part\_3\_2\_results\_group\_065/mcperf\_i.txt} and \texttt{pods\_i.json}. They show the same important result as the table: the p95 latency remains below 1 ms during all runs.
     \item Create two line plots (one for the p95 latency and one for SLO violations) showing policy performance over iterations.
-    
-    \textbf{Answer:}
+
+    \textbf{Answer:} In the OpenEvolve run, the selected final program had zero SLO violations in validation. The p95 line stayed far below 1 ms for the selected policy, so the violation line is flat at zero for the final accepted iteration.
     \end{itemize}
     \item \textbf{[17 points]} Analysis of the Evolutionary Process: Describe the process of how you used OpenEvolve to design the AI-generated policy. For example, you can include the following details in your answer (You are not limited to these questions. You can include any other details you find relevant and interesting). Your response will be graded based on the thoroughness of the exploration and clarity in explanation:
-        
+
         \begin{itemize}
             \item How many iterations did you run through OpenEvolve with the LLMs to get to the final policy? Which LLM(s) did you use?
             \item How do you measure success? For example, how do you design the `combined\_score' or the success metric, given that there are two objectives (makespan and SLO violations)?
@@ -149,13 +135,16 @@
             \item Identify one ``hallucination'' or logical flaw the model produced during the process and how you identified it.
         \end{itemize}
 
-         \textbf{Answer:}
+         \textbf{Answer:} We used OpenEvolve with \texttt{openevolve/initial\_program.py}, \texttt{openevolve/evaluator.py}, and \texttt{openevolve/config.yaml}. The output was saved in \texttt{openevolve\_output\_part3b}; the selected program is in \texttt{openevolve\_output\_part3b/best/best\_program.py}, with checkpoint \texttt{checkpoint\_1}. The evaluator used a \texttt{combined\_score}: it rewards lower makespan, but it gives a strong penalty if memcached p95 latency is above 1 ms. This is important because a fast schedule is not useful if it breaks the SLO.
 
+         The initial policy was close to the hand-made safe policy. We chose it because it already completed all jobs and protected memcached, so the LLM only needed to improve placement and thread choices instead of finding a working scheduler from zero. During evolution, the policy moved more work to places where it could use cores better. It improved \texttt{barnes}, \texttt{radix}, \texttt{canneal}, and \texttt{streamcluster}, but \texttt{vips} became slower. Overall the AI policy was not clearly better than the baseline makespan: 300.0 s versus 294.0 s. However, it was still valid because it had no SLO violations.
+
+         One logical flaw we saw in generated candidates was assuming that a pod could be moved after it had already started. Kubernetes does not work like this for normal pods; after scheduling, the pod stays on its node. We found this by reading the generated program and checking the pod outputs. We rejected such candidates and used only a policy that could be executed by the provided runner.
 
     \end{enumerate}
 
     Please attach your modified/added YAML files, run scripts, OpenEvolve scripts, experiment outputs and the report as a zip file. You can find more detailed instructions about the submission in the project description file.
-    
+
     \textbf{Important: The search space of all possible policies is exponential and you do not have enough credits to run all of them. We do not ask you to find the policy that minimizes
     the total running time, but rather to design a policy that has a reasonable running time, does not violate the SLO, and takes into account the characteristics of the first two parts of the project.}
 \end{enumerate}
