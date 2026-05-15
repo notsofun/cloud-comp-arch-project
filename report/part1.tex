@@ -5,7 +5,36 @@ Using the instructions provided in the project description, run memcached alone 
 \begin{enumerate}[label=(\alph*)]
     \item Plot a line graph with achieved QPS on the x-axis and 95th percentile latency on the y-axis.
 
-    \textbf{Answer:} We averaged the available memcached-alone run and the interference run in \texttt{part1/}. The no-interference curve stays below 2 ms p95 until around 40K achieved QPS, and then the latency knee appears. With interference, the knee appears much earlier and p95 is already above 2 ms around 15K--20K achieved QPS. The plotted data uses achieved QPS, not target QPS.
+    \begin{center}
+    \begin{tikzpicture}[x=0.22cm,y=0.45cm]
+        \draw[xstep=10, ystep=2, gray!20, very thin] (0,0) grid (50,14);
+        \draw[->] (0,0) -- (52,0) node[right] {Achieved QPS (K)};
+        \draw[->] (0,0) -- (0,15.5) node[above] {p95 latency (ms)};
+        \foreach \x in {0,10,20,30,40,50} {
+            \draw (\x,0) -- (\x,-0.2) node[below] {\x};
+        }
+        \foreach \y in {0,2,4,6,8,10,12,14} {
+            \draw (0,\y) -- (-0.5,\y) node[left] {\y};
+        }
+        \draw[gray, dotted, thick] (0,2) -- (50,2) node[right, black] {2 ms SLO};
+        \draw[blue, thick] plot coordinates {
+            (5.01,0.49) (9.97,0.51) (14.88,0.70) (19.96,0.63)
+            (25.05,0.72) (30.07,0.82) (34.93,0.87) (39.95,1.55)
+            (41.57,2.92) (42.18,2.92) (42.23,2.82) (42.68,2.79)
+            (42.69,2.80) (43.59,2.71) (43.65,2.72) (46.06,2.51)
+        };
+        \draw[red, thick, dashed] plot coordinates {
+            (5.00,1.38) (10.04,1.49) (14.52,13.91) (20.06,4.87)
+            (20.54,7.40) (21.19,7.11) (21.90,6.91) (22.41,6.75)
+            (22.57,6.43) (22.64,6.63) (22.69,6.62) (22.94,6.46)
+            (23.04,6.58) (23.29,6.16) (23.72,5.95) (24.40,4.93)
+        };
+        \draw[blue, thick] (28,13.5) -- (34,13.5) node[right, black] {no interference};
+        \draw[red, thick, dashed] (28,12.5) -- (34,12.5) node[right, black] {with interference};
+    \end{tikzpicture}
+    \end{center}
+
+    \textbf{Answer:} We group the available \texttt{mcperf} results by target QPS and condition, then plot the mean achieved QPS and mean p95 latency for each group. Since the \texttt{part1/} folder contains one run for each condition, the plotted means are equal to the corresponding measured points. The no-interference curve stays below 2 ms p95 until around 40K achieved QPS, and then the latency knee appears. With interference, the knee appears much earlier and p95 is already above 2 ms around 15K--20K achieved QPS. Both experiments use the same target-QPS sweep from 5K to 80K, but the x-axis uses achieved QPS; therefore, the interference curve ends at a lower achieved QPS because memcached saturates earlier under contention.
 \end{enumerate}
 
 \begin{enumerate}[label=(\alph*)]
@@ -14,13 +43,14 @@ Using the instructions provided in the project description, run memcached alone 
 \end{enumerate}
 
 \textbf{Answer:}
+We use the first point where p95 latency exceeds the 2 ms SLO as an empirical estimate of the saturation knee. For consistency with the plot in part (a), we use the no-interference curve shown there as the baseline: memcached first exceeds 2 ms at about 41.6K achieved QPS, and at the 35K target point it still has only about 0.87 ms p95 latency. The interference runs change this knee by different amounts:
 \begin{itemize}
-    \item \texttt{ibench-cpu}: It increases p95 latency and moves the knee to lower QPS. \textit{Explanation:} memcached needs CPU cycles for request handling and network processing. CPU interference steals those cycles.
-    \item \texttt{ibench-l1d}: It has a visible but smaller effect. \textit{Explanation:} memcached uses hash table lookups, so data-cache misses increase service time.
-    \item \texttt{ibench-l1i}: It is usually weaker than data-cache interference. \textit{Explanation:} memcached has a small request-processing code path, so instruction-cache pressure is not the main bottleneck.
-    \item \texttt{ibench-l2}: It hurts more than L1 interference. \textit{Explanation:} L2 is shared by a larger part of the working set, and misses go to slower levels.
-    \item \texttt{ibench-llc}: It hurts tail latency strongly. \textit{Explanation:} evicting memcached data from the last-level cache increases many request times.
-    \item \texttt{ibench-membw}: It is one of the worst interferences. \textit{Explanation:} memcached is latency sensitive, and memory-bandwidth pressure makes cache misses much slower.
+    \item \texttt{ibench-cpu}: This is one of the strongest interferences in our measurements. The p95 latency is already about 1.5--1.6 ms at 5K--10K target QPS, first exceeds 2 ms at about 15K achieved QPS, and then settles around 5.8--6.6 ms once the achieved throughput plateaus near 23K--24K QPS. CPU contention therefore moves the saturation point far to the left.
+    \item \texttt{ibench-l1d}: This is milder at low load: p95 stays below 1 ms up to about 30K target QPS. The knee appears at about 34.1K achieved QPS, where p95 reaches about 3.22 ms, and later points stay around 3.4--3.6 ms while achieved QPS remains near 34K--36K. Data-cache interference therefore hurts, but later than CPU or L1I interference.
+    \item \texttt{ibench-l1i}: This is also very harmful in the measured run. The p95 latency first exceeds 2 ms at about 15K achieved QPS and rises to roughly 6--8 ms for the higher target-QPS points, while achieved QPS remains mostly between 17K and 24K. This indicates strong same-core instruction-side contention or front-end pressure on memcached's request-processing path.
+    \item \texttt{ibench-l2}: L2 interference causes the knee around 25K achieved QPS. After that point, p95 latency stays roughly between 3.5 ms and 4.4 ms, and achieved throughput plateaus around the low-to-mid 30K QPS range. This suggests that L2 contention increases service time enough to reduce the saturation point substantially compared with the no-interference case.
+    \item \texttt{ibench-llc}: LLC interference is moderate to strong. The p95 latency is already elevated at 20K--25K target QPS, and it first exceeds 2 ms at about 29.7K achieved QPS. At higher loads, p95 is mostly around 3--4 ms, with one point above 5 ms. This is consistent with last-level cache contention increasing the cost of memcached lookups and making tail latency worse.
+    \item \texttt{ibench-membw}: In our run, memory-bandwidth interference is the closest to the no-interference baseline. The p95 latency remains below 2 ms through about 40K achieved QPS and first exceeds 2 ms at about 43.8K achieved QPS, which is close to the baseline knee from part (a). It still degrades the tail at high load, but its effect on the saturation point is much smaller than CPU, L1I, L2, LLC, or L1D interference in these measurements.
 \end{itemize}
 
 \begin{enumerate}[label=(\alph*)]
@@ -43,7 +73,7 @@ Using the instructions provided in the project description, run memcached alone 
     \item Assuming a service level objective (SLO) for memcached of up to 2~ms 95th percentile latency at 35K QPS, which iBench source of interference can safely be collocated with memcached without violating this SLO?
 \end{enumerate}
 
-\textbf{Answer:} From the available data, memcached alone has p95 about 0.866 ms at about 35K QPS. The interference run is already much worse, so it is not safe. In general, the only safe candidates are the light L1 instruction/data cases when measurements show p95 below 2 ms at 35K. CPU, LLC, and memory-bandwidth interference should not be colocated with memcached for this SLO.
+\textbf{Answer:} From the available data, memcached alone has p95 about 0.87 ms at about 35K achieved QPS. Looking at the 35K target-QPS point for each interference source, only \texttt{ibench-membw} satisfies the SLO in our measurements: it achieves about 35.0K QPS with p95 latency about 1.36 ms. The other interference sources violate the SLO at this load: \texttt{ibench-cpu} has about 6.24 ms p95 and only about 23.0K achieved QPS, \texttt{ibench-l1i} has about 7.32 ms p95 and only about 21.1K achieved QPS, \texttt{ibench-l1d} has about 3.22 ms p95, \texttt{ibench-l2} has about 3.54 ms p95, and \texttt{ibench-llc} has about 2.81 ms p95. Therefore, among the measured iBench workloads, only \texttt{ibench-membw} can be safely colocated with memcached for a 2 ms p95 SLO at 35K QPS.
 
 \begin{enumerate}[label=(\alph*)]
     \setcounter{enumi}{4}
@@ -77,22 +107,23 @@ Using the instructions provided in the project description, run memcached alone 
     \begin{itemize}
         \item What is the cost per hour for running each VM?
 
-        \textbf{Answer:} The Part 1 cluster uses e2-highcpu style VMs from \texttt{part1.yaml}. We estimated about 0.07--0.09 USD/hour for the small client/agent/server VMs, before disk and network costs. The exact number depends on the region and current Google Cloud price.
+        \textbf{Answer:} The Part 1 cluster in \texttt{part1.yaml} uses four VMs in \texttt{europe-west1-b}: one \texttt{n2-standard-2} master, one \texttt{e2-highcpu-2} memcached server, one \texttt{n2-standard-2} client-measure VM, and one \texttt{e2-standard-8} client-agent VM. Using the current Google Cloud on-demand VM prices for \texttt{europe-west1}, the approximate hourly prices are: \texttt{n2-standard-2}: 0.107 USD/hour, \texttt{e2-highcpu-2}: 0.054 USD/hour, and \texttt{e2-standard-8}: 0.295 USD/hour. Therefore, the compute-only cost is approximately
+        $2 \cdot 0.107 + 0.054 + 0.295 \approx 0.56$ USD/hour, before persistent disks, load balancer, and network traffic.
         \\
 
         \item How much time did your experiments take?
 
-        \textbf{Answer:} The actual mcperf scans are short, but cluster setup, loading data, repeated runs, and cleanup took about 1--2 hours.
+        \textbf{Answer:} The active experiment time was roughly 1--2 hours, including cluster setup, compiling and loading \texttt{mcperf}, loading memcached data, and running the no-interference and iBench interference scans. The actual cloud resources may have remained allocated longer than the active experiment time.
         \\
 
         \item What is the expected total cost and actual cost?
 
-        \textbf{Answer:} The theoretical estimate is roughly a few tens of cents for Part 1 compute time if the cluster is deleted quickly. The actual cost can be higher because disks, images, and idle time during debugging also count.
+        \textbf{Answer:} If the cluster had only been running for the active 1--2 hours, the expected compute cost would be about $0.56$--$1.12$, plus a small amount for disks and networking. The observed cost was about 5 USD. Dividing 5 USD by the compute-only burn rate of about 0.56 USD/hour implies about 8.9 hours of wall-clock cluster lifetime. After adding persistent disks and other small charges, this is still roughly an 8--9 hour effective runtime.
         \\
 
         \item Does the expected cost match the actual cost?
 
-        \textbf{Answer:} It may not match exactly. A better estimate would include exact VM runtime from creation to deletion, persistent disk price, network traffic, region, and any time when the cluster was idle but still running.
+        \textbf{Answer:} The actual cost does not match the short active-experiment estimate. The measurements themselves probably took only 1--2 hours, but a 5 USD bill is consistent with the Part 1 cluster being left running for most of a working day, or with repeated setup/debugging attempts. This is reasonable because Google Cloud charges VMs while they are in the \texttt{RUNNING} state, even if the cluster is idle. Persistent boot disks, load-balancer resources, and network traffic can also add small extra costs, but the main difference is likely the wall-clock time between cluster creation and deletion.
     \end{itemize}
 \end{enumerate}
 
