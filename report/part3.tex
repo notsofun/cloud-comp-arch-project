@@ -1,5 +1,59 @@
 \section*{Part 3 [68 points]}
 
+\newcommand{\PartThreeLatencyBars}[1]{%
+    \foreach \xs/\xe/\p in {#1} {
+        \draw[fill=black!45, draw=black!45] (\xs,0) rectangle (\xe,\p);
+    }
+}
+\newcommand{\PartThreeSpan}[6]{%
+    \draw[fill=#5, draw=black!35] (#1,#3) rectangle (#2,#4);
+    \node[font=\tiny] at ({(#1+#2)/2},{(#3+#4)/2}) {#6};
+}
+\newcommand{\PartThreePlot}[5]{%
+    \begin{center}
+    \begin{tikzpicture}[x=0.028cm, font=\scriptsize]
+        \node[anchor=west] at (-42,3.35) {\textbf{Run #1}};
+        \begin{scope}[y=0.003cm]
+            \draw[->] (0,0) -- ({#2+12},0) node[right] {time [s]};
+            \draw[->] (0,0) -- (0,1080) node[above] {p95 [$\mu$s]};
+            \foreach \y/\lab in {0/0,500/500,1000/1000} {
+                \draw[black!12] (0,\y) -- (#2,\y);
+                \draw (-2,\y) -- (0,\y) node[left,font=\tiny] {\lab};
+            }
+            \foreach \x in {#3} {
+                \draw[black!10] (\x,0) -- (\x,1000);
+                \draw (\x,0) -- (\x,-25) node[below,font=\tiny] {\x};
+            }
+            \draw[red, dashed, thick] (0,1000) -- (#2,1000) node[right,font=\tiny] {1 ms SLO};
+            \PartThreeLatencyBars{#4}
+        \end{scope}
+
+        \begin{scope}[yshift=-4.15cm, y=0.25cm]
+            \node[anchor=west,font=\tiny] at (0,12.65) {core allocation timeline};
+            \foreach \y in {-1,0,1,2,4,5,6,7,8,9,10,11} {
+                \draw[fill=black!3, draw=black!10] (0,\y) rectangle (#2,{\y+0.75});
+            }
+            \foreach \x in {#3} {
+                \draw[black!10] (\x,-1.25) -- (\x,12.25);
+                \draw (\x,-1.65) -- (\x,-1.85) node[below,font=\tiny] {\x};
+            }
+            \node[anchor=east,font=\tiny] at (-25,7.85) {node-a};
+            \node[anchor=east,font=\tiny] at (-25,0.85) {node-b};
+            \foreach \lab/\y in {A0/11,A1/10,A2/9,A3/8,A4/7,A5/6,A6/5,A7/4,B0/2,B1/1,B2/0,B3/-1} {
+                \node[anchor=east,font=\tiny] at (-3,{\y+0.38}) {\lab};
+            }
+            \PartThreeSpan{0}{#2}{11}{11.75}{gray!25}{memcached}
+            #5
+            \foreach \y in {-1,0,1,2,4,5,6,7,8,9,10,11} {
+                \draw[black!20] (0,\y) -- (#2,\y);
+                \draw[black!20] (0,{\y+0.75}) -- (#2,{\y+0.75});
+            }
+            \draw[->] (0,-1.65) -- ({#2+12},-1.65) node[right] {time [s]};
+        \end{scope}
+    \end{tikzpicture}
+    \end{center}
+}
+
 \begin{enumerate}
     \item \textbf{[34 points]} Describe and analyze your hand-crafted policy.
     \begin{enumerate}
@@ -21,13 +75,53 @@
         \end{tabular}
     \end{table}
 
-    \textbf{Answer:} We ran the hand-made scheduler three times. The makespans were 310 s, 286 s, and 286 s. The memcached SLO violation ratio was 0.00 in all three runs, because no p95 sample was above 1 ms. The maximum p95 latencies were 0.466 ms, 0.484 ms, and 0.454 ms, so the policy was safe for memcached.
+    \textbf{Answer:} We ran the hand-made scheduler three times. The execution times in the table are container wall-clock runtimes from the Kubernetes pod status fields \texttt{terminated.start\allowbreak edAt} and \texttt{terminated.finishedAt}. We use this definition because the question asks for batch-job-container runtime excluding paused time; in Part 3 we do not pause containers, so this is the time each job occupies cluster resources. We did not use benchmark-internal phase counters such as compute time, track time, partition time, or SPLASH/PARSEC sub-stage timings, because those do not consistently include the full container execution interval across all applications.
+
+    The makespans were 310 s, 286 s, and 286 s. The memcached SLO violation ratio was 0.00 in all three runs: 0/27, 0/25, and 0/25 p95 latency samples were above 1 ms during the interval from the first batch-job-container start to the last batch-job-container completion. The maximum p95 latencies during this interval were 0.466 ms, 0.469 ms, and 0.454 ms, so the policy was safe for memcached.
     \\
 
     Create 3 bar plots (one for each run) of memcached p95 latency (y-axis) over time (x-axis), with annotations showing when each batch job started and ended, also indicating the machine each of them is running on. Using the augmented version of mcperf, you get two additional columns in the output: \texttt{ts\_start} and \texttt{ts\_end}. Use them to determine the width of each bar in the bar plot, while the height should represent the p95 latency. Align the $x$ axis so that $x=0$ coincides with the starting time of the first container.
     For each core in each machine show what job it is running using the colors proposed in this template (you can find them in \texttt{main.tex}). For example, draw a bar in {\color{vips}the color of vips} for core x from when vips is started to when it ends if vips ran on core x.
 
-    \textbf{Plots:} The plots are produced from \texttt{part\_3\_1\_results\_group\_065/mcperf\_i.txt} and \texttt{pods\_i.json}. In the plots, all latency bars stay below the 1 ms SLO line. The job colors follow the color definitions in \texttt{main.tex}.
+    \textbf{Plots:} The following plots are drawn directly in \LaTeX{} from \texttt{part\_3\_1\_results\_group\_065\allowbreak /mcperf\_i.txt} and \texttt{pods\_i.json}. The upper panel uses the augmented \texttt{mcperf} \texttt{ts\_start}/\texttt{ts\_end} columns for bar width and p95 latency for bar height. The lower panel shows the core assignment of each node.
+
+    \PartThreePlot{1}{310}{0,50,...,300}{
+        0/7.6/461.0,9.2/19.3/439.6,20.8/30.9/448.5,32.4/42.5/440.8,44.0/54.1/438.9,55.6/65.7/457.0,67.2/77.3/447.6,78.9/89.0/448.0,90.5/100.6/439.2,102.1/112.2/453.1,113.7/123.8/448.3,125.3/135.4/434.2,136.9/147.0/428.5,148.5/158.6/439.7,160.1/170.2/435.8,171.8/181.9/436.8,183.4/193.5/439.7,195.0/205.1/439.6,206.6/216.7/416.3,218.2/228.3/431.9,229.8/239.9/439.8,241.4/251.5/440.4,253.0/263.1/428.2,264.7/274.8/463.4,276.3/286.4/451.7,287.9/298.0/466.4,299.5/309.6/451.0
+    }{
+        \PartThreeSpan{0}{243}{7}{10.75}{streamcluster}{streamcl.}
+        \PartThreeSpan{4}{197}{5}{6.75}{canneal}{canneal}
+        \PartThreeSpan{6}{74}{4}{4.75}{radix}{radix}
+        \PartThreeSpan{218}{283}{4}{6.75}{barnes}{barnes}
+        \PartThreeSpan{2}{132}{-1}{2.75}{freqmine}{freqmine}
+        \PartThreeSpan{187}{242}{-1}{2.75}{vips}{vips}
+        \PartThreeSpan{270}{310}{-1}{2.75}{blackscholes}{blacksch.}
+    }
+
+    \PartThreePlot{2}{286}{0,50,...,250}{
+        1.5/11.6/438.0,13.1/23.3/425.7,24.8/34.9/422.2,36.4/46.5/429.5,48.0/58.1/426.9,59.6/69.7/449.0,71.2/81.4/431.4,82.9/93.0/433.2,94.5/104.6/441.3,106.1/116.2/460.1,117.7/127.8/423.4,129.4/139.5/437.4,141.0/151.1/434.4,152.6/162.7/435.0,164.2/174.3/419.7,175.8/185.9/431.7,187.5/197.6/427.0,199.1/209.2/416.3,210.7/220.8/439.5,222.3/232.4/440.3,233.9/244.0/468.7,245.5/255.6/451.4,257.2/267.3/420.6,268.8/278.9/423.5,280.4/290.5/460.9
+    }{
+        \PartThreeSpan{0}{242}{7}{10.75}{streamcluster}{streamcl.}
+        \PartThreeSpan{0}{198}{5}{6.75}{canneal}{canneal}
+        \PartThreeSpan{1}{66}{4}{4.75}{radix}{radix}
+        \PartThreeSpan{224}{286}{4}{6.75}{barnes}{barnes}
+        \PartThreeSpan{1}{132}{-1}{2.75}{freqmine}{freqmine}
+        \PartThreeSpan{157}{211}{-1}{2.75}{vips}{vips}
+        \PartThreeSpan{225}{264}{-1}{2.75}{blackscholes}{blacksch.}
+    }
+
+    \PartThreePlot{3}{286}{0,50,...,250}{
+        1.8/11.9/419.4,13.4/23.5/431.4,25.0/35.1/429.6,36.7/46.8/407.0,48.3/58.4/426.5,59.9/70.0/422.8,71.5/81.6/433.4,83.1/93.2/420.7,94.7/104.8/409.0,106.3/116.4/414.9,118.0/128.1/424.0,129.6/139.7/427.0,141.2/151.3/425.8,152.8/162.9/417.3,164.4/174.5/406.6,176.0/186.1/416.5,187.6/197.7/420.7,199.3/209.4/408.5,210.9/221.0/419.7,222.5/232.6/419.2,234.1/244.2/408.3,245.7/255.8/431.5,257.3/267.4/424.6,268.9/279.0/453.9,280.6/290.7/439.3
+    }{
+        \PartThreeSpan{0}{243}{7}{10.75}{streamcluster}{streamcl.}
+        \PartThreeSpan{1}{200}{5}{6.75}{canneal}{canneal}
+        \PartThreeSpan{1}{68}{4}{4.75}{radix}{radix}
+        \PartThreeSpan{223}{286}{4}{6.75}{barnes}{barnes}
+        \PartThreeSpan{1}{132}{-1}{2.75}{freqmine}{freqmine}
+        \PartThreeSpan{157}{211}{-1}{2.75}{vips}{vips}
+        \PartThreeSpan{225}{266}{-1}{2.75}{blackscholes}{blacksch.}
+    }
+
+    In all three runs, the p95 latency bars remain below the 1 ms SLO line while all seven PARSEC jobs complete successfully.
     \\
 
     \item \textbf{[17 points]} Describe and justify the “optimal” scheduling policy you have designed.
@@ -119,27 +213,117 @@
 
     \item Create 3 bar plots (one for each run), for the final AI-generated policy, of memcached p95 latency (y-axis) over time (x-axis), with annotations showing when each batch job started and ended, also indicating the machine each of them is running on. Use the same method as described in the previous question to create the bar plots.
 
-    \textbf{Answer:} The three AI-policy plots are generated from \texttt{part\_3\_2\_results\_group\_065/mcperf\_i.txt} and \texttt{pods\_i.json}. They show the same important result as the table: the p95 latency remains below 1 ms during all runs.
+
+    \textbf{Answer:} The following plots are drawn directly in \LaTeX{} from \texttt{part\_3\_2\_results\_ \allowbreak group\_065/mcperf\_i.txt} and \texttt{pods\_i.json}, using the same plotting method as above.
+
+    \PartThreePlot{1}{293}{0,50,...,250}{
+        1.5/11.6/391.1,13.2/23.3/373.5,24.8/34.9/385.8,36.4/46.5/395.4,48.0/58.1/399.5,59.6/69.7/384.9,71.2/81.4/393.5,82.9/93.0/392.2,94.5/104.6/397.6,106.1/116.2/390.2,117.7/127.8/413.7,129.4/139.5/395.4,141.0/151.1/410.9,152.6/162.7/396.8,164.2/174.3/395.5,175.8/185.9/405.0,187.4/197.5/413.0,199.0/209.1/413.6,210.7/220.8/413.7,222.3/232.4/382.8,233.9/244.0/412.6,245.5/255.6/391.2,257.1/267.2/398.5,268.7/278.8/417.6,280.3/290.4/413.9,292.0/302.1/427.3
+    }{
+        \PartThreeSpan{0}{158}{7}{10.75}{streamcluster}{streamcl.}
+        \PartThreeSpan{1}{188}{5}{6.75}{canneal}{canneal}
+        \PartThreeSpan{1}{41}{4}{4.75}{radix}{radix}
+        \PartThreeSpan{214}{257}{4}{6.75}{barnes}{barnes}
+        \PartThreeSpan{2}{130}{-1}{2.75}{freqmine}{freqmine}
+        \PartThreeSpan{146}{226}{-1}{2.75}{vips}{vips}
+        \PartThreeSpan{248}{293}{-1}{2.75}{blackscholes}{blacksch.}
+    }
+
+    \PartThreePlot{2}{308}{0,50,...,300}{
+        2.2/12.4/394.3,13.9/24.1/403.4,25.6/35.7/398.9,37.2/47.3/401.8,48.8/58.9/406.1,60.4/70.5/400.3,72.0/82.1/397.6,83.6/93.7/403.5,95.3/105.4/392.8,106.9/117.0/393.9,118.5/128.6/394.3,130.1/140.2/392.1,141.7/151.8/393.3,153.3/163.4/395.4,165.0/175.1/408.1,176.6/186.7/399.5,188.2/198.3/410.7,199.8/209.9/408.6,211.4/221.6/407.5,223.1/233.2/387.1,234.7/244.8/374.9,246.3/256.4/393.3,257.9/268.0/411.0,269.6/279.7/412.7,281.2/291.3/416.6,292.8/302.9/395.3,304.4/314.5/408.4
+    }{
+        \PartThreeSpan{0}{158}{7}{10.75}{streamcluster}{streamcl.}
+        \PartThreeSpan{1}{184}{5}{6.75}{canneal}{canneal}
+        \PartThreeSpan{2}{41}{4}{4.75}{radix}{radix}
+        \PartThreeSpan{205}{248}{4}{6.75}{barnes}{barnes}
+        \PartThreeSpan{2}{136}{-1}{2.75}{freqmine}{freqmine}
+        \PartThreeSpan{153}{235}{-1}{2.75}{vips}{vips}
+        \PartThreeSpan{264}{308}{-1}{2.75}{blackscholes}{blacksch.}
+    }
+
+    \PartThreePlot{3}{299}{0,50,...,250}{
+        1.0/11.2/399.6,12.7/22.8/395.5,24.3/34.4/427.8,35.9/46.0/401.3,47.6/57.7/401.7,59.2/69.3/396.6,70.8/80.9/402.0,82.4/92.5/401.5,94.0/104.1/393.9,105.7/115.8/397.2,117.3/127.4/396.6,128.9/139.0/390.4,140.5/150.6/402.9,152.1/162.2/399.6,163.8/173.9/391.1,175.4/185.5/391.2,187.0/197.1/402.0,198.6/208.7/406.8,210.2/220.3/392.0,221.8/231.9/401.2,233.5/243.6/420.0,245.1/255.2/430.9,256.7/266.8/491.7,268.3/278.4/458.5,279.9/290.0/479.1,291.6/301.7/592.2
+    }{
+        \PartThreeSpan{0}{162}{7}{10.75}{streamcluster}{streamcl.}
+        \PartThreeSpan{0}{186}{5}{6.75}{canneal}{canneal}
+        \PartThreeSpan{1}{40}{4}{4.75}{radix}{radix}
+        \PartThreeSpan{210}{254}{4}{6.75}{barnes}{barnes}
+        \PartThreeSpan{1}{136}{-1}{2.75}{freqmine}{freqmine}
+        \PartThreeSpan{154}{231}{-1}{2.75}{vips}{vips}
+        \PartThreeSpan{254}{299}{-1}{2.75}{blackscholes}{blacksch.}
+    }
+
+    All three AI-policy runs remain below the 1 ms p95 SLO line; the SLO violation ratio is 0.00 in each run.
     \item Create two line plots (one for the p95 latency and one for SLO violations) showing policy performance over iterations.
 
-    \textbf{Answer:} In the OpenEvolve run, the selected final program had zero SLO violations in validation. The p95 line stayed far below 1 ms for the selected policy, so the violation line is flat at zero for the final accepted iteration.
+    \textbf{Answer:} The submitted OpenEvolve log contains the initial policy evaluation and one evolved candidate. We limited the number of iterations because every evaluation launched a real Part 3 run on the cloud cluster, and the LLM/API endpoint was not stable enough to spend a large budget on a long search.
+
+    \begin{center}
+    \begin{tikzpicture}[x=4cm,y=0.65cm,font=\scriptsize]
+        \node[anchor=west] at (-0.35,5.8) {\textbf{OpenEvolve p95 latency}};
+        \draw[->] (0,0) -- (1.25,0) node[right] {iteration};
+        \draw[->] (0,0) -- (0,6.2) node[above] {max p95 [$\mu$s]};
+        \foreach \x/\lab in {0/initial,1/iter. 1} {
+            \draw (\x,0) -- (\x,-0.12) node[below] {\lab};
+        }
+        \foreach \val/\y in {350/0,370/1.6,390/3.2,410/4.8} {
+            \draw[black!10] (0,\y) -- (1.05,\y);
+            \draw (-0.03,\y) -- (0,\y) node[left] {\val};
+        }
+        \draw[blue, thick] (0,3.08) -- (1,2.85);
+        \fill[blue] (0,3.08) circle (1.6pt) node[above] {388.5};
+        \fill[blue] (1,2.85) circle (1.6pt) node[above] {385.6};
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{center}
+    \begin{tikzpicture}[x=4cm,y=3cm,font=\scriptsize]
+        \node[anchor=west] at (-0.35,1.15) {\textbf{OpenEvolve SLO violations}};
+        \draw[->] (0,0) -- (1.25,0) node[right] {iteration};
+        \draw[->] (0,0) -- (0,1.25) node[above] {violating samples};
+        \foreach \x/\lab in {0/initial,1/iter. 1} {
+            \draw (\x,0) -- (\x,-0.04) node[below] {\lab};
+        }
+        \foreach \val in {0,0.5,1.0} {
+            \draw[black!10] (0,\val) -- (1.05,\val);
+            \draw (-0.03,\val) -- (0,\val) node[left] {\val};
+        }
+        \draw[red, thick] (0,0) -- (1,0);
+        \fill[red] (0,0) circle (1.6pt) node[above] {0};
+        \fill[red] (1,0) circle (1.6pt) node[above] {0};
+    \end{tikzpicture}
+    \end{center}
+
+    In these two evaluation points, p95 latency stayed far below the 1 ms SLO: the initial policy had max p95 $=388.5~\mu$s and the iteration-1 candidate had max p95 $=385.6~\mu$s. The SLO-violation line is flat at zero for both points.
     \end{itemize}
     \item \textbf{[17 points]} Analysis of the Evolutionary Process: Describe the process of how you used OpenEvolve to design the AI-generated policy. For example, you can include the following details in your answer (You are not limited to these questions. You can include any other details you find relevant and interesting). Your response will be graded based on the thoroughness of the exploration and clarity in explanation:
 
         \begin{itemize}
             \item How many iterations did you run through OpenEvolve with the LLMs to get to the final policy? Which LLM(s) did you use?
+
+            \textbf{Answer:} We used OpenEvolve with \texttt{openevolve/initial\_program.py}, \texttt{openevolve/evaluator.py}, and \texttt{openevolve/config.yaml}. The output was saved in \texttt{openevolve\_output\_part3b}; the selected program is in \texttt{openevolve\_output\_part3b/best/best\_program.py}, with checkpoint \texttt{checkpoint\_1}. The model configured for the run was \texttt{swiss-ai/Apertus-70B-Instruct-2509}. We did not run a long search: the log contains one initial evaluation and one evolved candidate. The initial program scored 0.6188 with 305 s makespan, max p95 $=388.5~\mu$s, and zero SLO violations; the iteration-1 candidate scored 0.6238 with 301 s makespan, max p95 $=385.6~\mu$s, and zero SLO violations. We stopped after this limited search because each evaluation launched a real Kubernetes experiment and the LLM/API endpoint was unstable during our experiments.
+
             \item How do you measure success? For example, how do you design the `combined\_score' or the success metric, given that there are two objectives (makespan and SLO violations)?
+
+            \textbf{Answer:} The evaluator used \texttt{combined\_score}. It first checks correctness, meaning that all seven jobs must complete. For valid runs, it rewards low makespan using \texttt{makespan\_score = max(0, 1 - makespan/600)} and also rewards satisfying the memcached SLO through \texttt{slo\_ok}. It then subtracts a strong penalty for any p95 sample above 1 ms. This makes the objective match the assignment: a policy is only useful if it improves batch makespan while keeping memcached below the tail-latency SLO.
+
             \item Describe the initial policy you fed to the LLM(s) and why you chose this as the initial policy.
+
+            \textbf{Answer:} The initial policy was close to the hand-crafted safe policy. Memcached stayed on \texttt{node-a-8core} core 0, while batch jobs used the remaining \texttt{node-a} cores and all \texttt{node-b-4core} cores. We chose this starting point because it already completed all jobs and protected memcached, so the LLM only needed to search for improved placement, order, or thread choices instead of discovering a valid scheduler from scratch.
+
             \item Describe how the policy changes during the process, and how it impacted the performance of the policy (e.g., tail latency; SLO violations).
+
+            \textbf{Answer:} In the final saved \texttt{best\_program.py}, the policy is not materially different from the initial program. The OpenEvolve metadata shows that the model tried changes such as reordering CPU lists, for example \texttt{[5, 6, 7]} to \texttt{[7, 6, 5]}, but this does not change the set of pinned cores, the node placement, the thread count, or the greedy launch order. The small single-run improvement from 305 s to 301 s is therefore most likely measurement noise rather than a real scheduling improvement.
+
             \item Explain why did this AI-generated policy perform better (or worse) than the baseline?
+
+            \textbf{Answer:} In the final three-run benchmark, the AI-generated policy remained valid and had zero SLO violations, but it was worse than the hand-crafted baseline in makespan: 300.0 s versus 294.0 s. The per-job results show why the comparison is mixed. Some jobs became faster in the AI runs, especially \texttt{streamcluster} (242.7 s to 159.3 s), \texttt{radix} (66.7 s to 39.3 s), and \texttt{barnes} (63.3 s to 43.3 s). However, \texttt{vips} slowed from 54.3 s to 79.7 s, and this matters disproportionately because of where it sits in the schedule. \texttt{freqmine}, \texttt{vips}, and \texttt{blackscholes} all run on \texttt{node-b-4core} using cores 0--3 with 4 threads. Since each of them occupies the entire 4-core node, they cannot overlap. In this greedy scheduler, \texttt{blackscholes} can only start after \texttt{vips} releases all four node-b cores. Therefore, a slower \texttt{vips} does not slow \texttt{blackscholes} through direct interference; it delays the start of \texttt{blackscholes} and lengthens the node-b critical path.
+
+            This is the weakness of the AI-generated policy. The model had only coarse information about the workloads and a noisy scalar objective from the evaluator. It did not really know which resource bottleneck each application stresses, or which jobs lie on the schedule's critical path. It could see that some jobs are short or long, but it did not reason deeply about the node-b chain \texttt{freqmine} $\rightarrow$ \texttt{vips} $\rightarrow$ \texttt{blackscholes}. A better policy would try to reduce this serialized tail, for example by changing placement or ordering if Part 2 measurements support it. Instead, the final saved AI policy kept the same node placement, thread counts, and effective core sets as the initial safe policy. The observed speedups and slowdowns are therefore more likely due to run-to-run noise and VM variability than a genuine scheduling improvement. With only one evolved candidate, OpenEvolve mostly produced superficially plausible edits rather than learning the workload-specific bottlenecks needed to beat the baseline.
+
             \item Identify one ``hallucination'' or logical flaw the model produced during the process and how you identified it.
+
+            \textbf{Answer:} One concrete logical flaw appears in the saved OpenEvolve checkpoint artifact \texttt{openevolve\_output\_part3b/checkpoints/checkpoint\_1/programs/31faaa9f-727c-441c-81c6-78a729747350.json}. In the model's explanation for changing \texttt{vips} from cores \texttt{[0, 1, 2, 3]} to \texttt{[1, 2, 3, 0]}, it claims that using core 0 last could let shorter jobs such as \texttt{radix} or \texttt{blackscholes} use core 0 first. This is not correct. \texttt{radix} runs on \texttt{node-a-8core} core 7, not on \texttt{node-b-4core}, so it cannot use node-b core 0 at all. Also, \texttt{vips} and \texttt{blackscholes} both request all four node-b cores, so permuting the list of cores does not create partial sharing or change scheduling priority. We identified the flaw by reading the saved OpenEvolve response and checking the actual pod specifications in \texttt{part\_3\_2\_results\_group\_065/pods\_i.json}, which show the real node and core assignments.
         \end{itemize}
-
-         \textbf{Answer:} We used OpenEvolve with \texttt{openevolve/initial\_program.py}, \texttt{openevolve/evaluator.py}, and \texttt{openevolve/config.yaml}. The output was saved in \texttt{openevolve\_output\_part3b}; the selected program is in \texttt{openevolve\_output\_part3b/best/best\_program.py}, with checkpoint \texttt{checkpoint\_1}. The evaluator used a \texttt{combined\_score}: it rewards lower makespan, but it gives a strong penalty if memcached p95 latency is above 1 ms. This is important because a fast schedule is not useful if it breaks the SLO.
-
-         The initial policy was close to the hand-made safe policy. We chose it because it already completed all jobs and protected memcached, so the LLM only needed to improve placement and thread choices instead of finding a working scheduler from zero. During evolution, the policy moved more work to places where it could use cores better. It improved \texttt{barnes}, \texttt{radix}, \texttt{canneal}, and \texttt{streamcluster}, but \texttt{vips} became slower. Overall the AI policy was not clearly better than the baseline makespan: 300.0 s versus 294.0 s. However, it was still valid because it had no SLO violations.
-
-         One logical flaw we saw in generated candidates was assuming that a pod could be moved after it had already started. Kubernetes does not work like this for normal pods; after scheduling, the pod stays on its node. We found this by reading the generated program and checking the pod outputs. We rejected such candidates and used only a policy that could be executed by the provided runner.
 
     \end{enumerate}
 
